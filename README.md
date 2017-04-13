@@ -1,7 +1,7 @@
 Process Model Library (PML)
 ===========================
 
-The Process Model Library (PML) is an attempt to reinvision the mechanism for representing
+The Process Model Library (PML) is an attempt to reenvision the mechanism for representing
 and processing processes models.  Based on prior work on the DARPA Adaptive Vehicle Make (AVM)
 program, DMDII initiatives, and other open standards such as the Process Specification Language,
 the PML seeks to provide a standards-driven representation for programmatically generating
@@ -14,7 +14,7 @@ engineering, or business processes, for example.  Edges represent the dependenci
 which could more concretely represent the flow of information or material through the process graph.
 
 The process modeling language provides an iterative, programmatic mechanism for generating the graph.
-The mechanism begins by "seeding" one or more initial nodes.  Each node requires a "type" attribute,
+The mechanism begins by "seeding" one or more initial nodes.  Each node requires a "kind" attribute,
 which is used to locate the appropriate process model (or models if more than one feasible model
 exists).  The process model is then executed to "expand" the original node with finer details, typically
 by adding additional nodes and edges to the graph.  This iterative process continues until no further

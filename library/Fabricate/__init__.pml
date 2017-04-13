@@ -1,0 +1,1 @@
+register_file("Make :: Fabricate", "Fabricate.pml")

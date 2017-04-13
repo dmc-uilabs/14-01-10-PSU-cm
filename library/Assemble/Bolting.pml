@@ -6,6 +6,7 @@ p = Process(kind = "Assemble :: Bolting :: Bolt",
 			name = "Bolt" if quantity == 1 else ("Bolt x %d" % quantity),
 			level = "operation",
 			time = boltTime,
-			cost = boltTime * generalLaborCost)
+			cost = boltTime * generalLaborCost,
+			resource = ["General Labor", "Hand Tool"])
 			
 replace(parent, p)

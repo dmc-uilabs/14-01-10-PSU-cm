@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mBOM version="2.0">
+  <parts>
+    <part id="d1146573-70b3-4463-8fac-cd4fb59fa684">
+      <name>Part1</name>
+      <length unit="mm">47.616109284685933</length>
+      <height unit="mm">50.800000000000011</height>
+      <width unit="mm">47.615254174927799</width>
+      <surface_area unit="mm2">13199.451141525973</surface_area>
+      <volume unit="mm3">42968.237338969411</volume>
+      <weight unit="kg">42968237.338969409</weight>
+      <instances>
+        <instance instance_id="926d0684-20dc-4ce4-8ca3-52c2af4988cc" />
+        <instance instance_id="02f2fd2f-c236-4580-8fc0-e608848aabcc" />
+      </instances>
+      <manufacturingDetails>
+        <material>Steel</material>
+        <coatings>
+        	<coating>Powder Top Coating</coating>
+        </coatings>
+      </manufacturingDetails>
+    </part>
+    <part id="1b46e606-f302-4efb-9ee9-5ccdca90f553">
+      <name>Part2</name>
+      <length unit="mm">25.441961226668798</length>
+      <height unit="mm">50.800000000000018</height>
+      <width unit="mm">25.43822649519409</width>
+      <surface_area unit="mm2">7562.3659056658926</surface_area>
+      <volume unit="mm3">11384.09964272515</volume>
+      <weight unit="kg">11384099.642725149</weight>
+      <instances>
+        <instance instance_id="fb7aacce-5c76-44de-b113-06f59597b569" />
+      </instances>
+      <manufacturingDetails>
+        <material>Aluminum</material>
+        <coatings>
+        	<coating>Paint</coating>
+        </coatings>
+      </manufacturingDetails>
+    </part>
+  </parts>
+  <assemblies>
+    <subassembly id="83b5b970-2a4b-4ec4-8c42-3b5d53e10915">
+      <name>Assembly</name>
+      <contains>
+        <partRef instance_id="926d0684-20dc-4ce4-8ca3-52c2af4988cc" />
+        <partRef instance_id="02f2fd2f-c236-4580-8fc0-e608848aabcc" />
+        <partRef instance_id="fb7aacce-5c76-44de-b113-06f59597b569" />
+      </contains>
+      <assemblyDetails>
+        <assemblyDetail>
+          <mechanical>
+            <fasteningMethod>bolt</fasteningMethod>
+            <fasteningQuantity>4</fasteningQuantity>
+          </mechanical>
+        </assemblyDetail>
+      </assemblyDetails>
+    </subassembly>
+  </assemblies>
+</mBOM>

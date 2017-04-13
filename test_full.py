@@ -1,37 +1,29 @@
 from pml import *
 import logging
 import networkx as nx
-from idlelib import TreeWidget
+import time
+
+overall_start_time = time.time()
 
 #logging.basicConfig(level=logging.INFO)
 
-# Initialize the system (ideally, this would already be in a database)
-set_constant("Machinist :: Labor Rate", 59 * dollars / hour)
-set_constant("Caster :: Labor Rate", 30 * dollars / hour)
-set_constant("General Labor :: Labor Rate", 25 * dollars / hour)
-set_constant("Welder :: Labor Rate", 40 * dollars / hour)
-set_constant("X-Ray Machine :: Cost", 10 * dollars)
-set_constant("Material :: Steel :: Cost", 0.5 * dollars / inch**3)
-set_constant("Material :: Aluminum :: Cost", 0.8 * dollars / inch**3)
-set_constant("Material :: Paint :: Cost", 0.2 * dollars / inch**2)
-
-register_file("Make", "library/make.pml")
-register_file("Make :: Purchase", "library/purchase.pml")
-register_file("Make :: Fabricate", "library/fabricate.pml")
-register_file("Make :: Fabricate :: Stock Machining", "library/machining.pml")
-register_file("Make :: Fabricate :: Plate/Sheet", "library/plate.pml")
-register_file("Make :: Fabricate :: Casting", "library/casting.pml")
-register_file("Make :: Fabricate :: Paint", "library/painting.pml")
-register_file("Assemble", "library/assembly.pml")
-register_file("Assemble :: Welding", "library/welding.pml")
-# register_file("Assemble :: Bolting", "library/bolting.pml")
+# Scan the library/ folder for __init__.pml files, which are
+# executed to initialize the PML "database"
+start_time = time.time()
+auto_register("library")
+print("Load PML Library Elapsed Time: %f s" % (time.time() - start_time))
 
 # load structure from iFAB BOM
 import os
 import xml.etree.ElementTree as ET
 
 path = r"examples/engine_assembly"
-tree = ET.parse(os.path.join(path, "eBOM.xml"))
+file = os.path.join(path, "eBOM.xml")
+#file = r"examples/simpleExample.xml"
+
+start_time = time.time()
+
+tree = ET.parse(file)
 root = tree.getroot()
 
 # standard units used by iFAB converted into SymPy units
@@ -72,6 +64,10 @@ for part in parts.findall("part"):
         
     if part.find("manufacturingDetails/leadTime") is not None:
         setattr(loaded_part, "leadTime", float(part.find("manufacturingDetails/leadTime").text) * days)
+        
+    for coating in part.findall("manufacturingDetails/coatings/coating"):
+        setattr(loaded_part, "coating", coating.text)
+        
     
     make_process = Process(kind = "Make",
                            name = "Make " + loaded_part.name,
@@ -108,9 +104,12 @@ for subassembly in assemblies.findall("subassembly"):
         dependencies.append(loaded_processes[id])
          
     for ad in subassembly.findall("assemblyDetails/assemblyDetail"):
-        if ad.find("mechanical") is not None:
-            fastening_steps.append({ "method" : ad.find("mechanical/fasteningMethod").text,
-                                     "quantity" : int(ad.find("mechanical/fasteningQuantity").text) })
+        for elem in ad.findall("*"):
+            if elem.tag == "mechanical":
+                fastening_steps.append({ "method" : elem.find("fasteningMethod").text,
+                                         "quantity" : int(elem.find("fasteningQuantity").text) })
+            else:
+                fastening_steps.append({ "method" : elem.tag })
         
     assemble_process = loaded_processes[subassembly.get("id")]
     assemble_process.set_predecessors(dependencies)
@@ -123,29 +122,67 @@ deliver = Process(kind = "Deliver",
                   level = "activity",
                   predecessor = [p for p in loaded_processes.values() if len(p.successors) == 0])
 
+print("Load XML Elapsed Time: %f s" % (time.time() - start_time))
+
 # Create and expand the process graph
 processGraph = ProcessGraph(*loaded_processes.values(), deliver)
+
+start_time = time.time()
 expand_graph(processGraph)
+print("Expand Graph Elapsed Time: %f s" % (time.time() - start_time))
 
 # # Save graph as image
+start_time = time.time()
 as_png(processGraph, "graph.png")
+print("Save PNG Elapsed Time: %f s" % (time.time() - start_time))
 
 # Validate the graph by ensuring routings exist
 if validate_graph(processGraph):
+    print()
     print("Graph is valid!")
       
     # Find the minimum cost
+    start_time = time.time()
     print()
     print("-- Find cheapest configuration --")
     (total_cost, selected_processes) = find_min(processGraph, weight="cost")
     print("    Cheapest Configuration: %s" % as_dollars(total_cost))
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
+    
+    start_time = time.time()
+    print()
+    print("-- Find quickest configuration --")
     (total_time, selected_processes) = find_min(processGraph, weight="time")
     print("    Quickest Configuration: %s" % as_time(total_time))
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
+    
+    start_time = time.time()
+    print()
+    print("-- Find best 50/50 configuration --")
     (cp_time, selected_processes) = find_min(processGraph, weight="linearcomb")
-    print("    Quickest Configuration: %s" % as_dollars(cp_time))
+    print("    Best Configuration: %s" % str(cp_time))
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
+    
     # Save the minimum routings to a graph
     minimumGraph = create_subgraph(selected_processes)
     as_png(minimumGraph, "minimumGraph.png")
+    
+    # Save the minimum routings to a graph
+    start_time = time.time()
+    print()
+    print("-- Saving cheapest configuration to PNG --")
+    minimumGraph = create_subgraph(selected_processes)
+    as_png(minimumGraph, "minimumGraph.png")
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
+    
+    # Determine the resources required
+    print()
+    print("-- Resources required by configuration --")
+    print("   ", create_resources(selected_processes))
       
 else:
+    print()
     print("Process graph is invalid - No routing exists")
+    
+print()
+print("Overall Elapsed Time: %f s" % (time.time() - overall_start_time))

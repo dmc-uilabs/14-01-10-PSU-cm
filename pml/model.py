@@ -176,6 +176,28 @@ def create_subgraph(processes):
                 
     return ProcessGraph(*processes)
 
+def create_resources(processes, attr="resource"):
+    '''Scans all of the processes for the given attribute, which can either be a
+    value, a list of values, or a dictionary mapping values to their quantity.  If
+    a value or a list of values is given, we assume the quantity is 1 (we don't
+    currently check if the value appears multiple times in a list).'''
+    resource_map = {}
+    
+    for process in processes:
+        if hasattr(process, attr):
+            resources = getattr(process, attr)
+            
+            if isinstance(resources, (list, tuple)):
+                for resource in resources:
+                    resource_map[resource] = max(1, resource_map.get(resource, 1))
+            elif isinstance(resources, dict):
+                for k, v in resources.items():
+                    resource_map[k] = max(resource_map.get(k, 0), v)
+            else:
+                resource_map[resources] = max(1, resource_map.get(resources, 1))
+                
+    return resource_map
+
 class Part(object):
     
     def __init__(self, name, **kwargs):
@@ -268,10 +290,3 @@ class Process(object):
             
     def __repr__(self):
         return "Process[" + self.kind + "]"
-            
-class Resource(object):
-    
-    def __init__(self, name, quantity, requires = []):
-        self.name = name
-        self.quantity = quantity
-        self.requires = requires

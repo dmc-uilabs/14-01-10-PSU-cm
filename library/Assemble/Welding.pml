@@ -27,14 +27,16 @@ p1 = Process(kind = "Assemble :: Welding :: Prepare Joint",
 			 name = "Prepare Joint",
 			 level = "operation",
 			 time = prepareTime,
-			 cost = prepareTime * welderCost)
+			 cost = prepareTime * welderCost,
+			 resource = "Welder")
 			 
 p2 = Process(kind = "Assemble :: Welding :: Weld Joint",
 			 name = "Weld Joint",
 			 level = "operation",
 			 predecessor = p1,
 			 time = weldTime,
-			 cost = weldTime * welderCost)
+			 cost = weldTime * welderCost,
+			 resource = "Welder")
 	
 if not requiresXRay:		 
 	p3 = Process(kind = "Assemble :: Welding :: Visual Inspection",
@@ -42,13 +44,15 @@ if not requiresXRay:
 				 level = "operation",
 				 predecessor = p2,
 				 time = visualInspectionTime,
-				 cost = visualInspectionTime * welderCost)
+				 cost = visualInspectionTime * welderCost,
+				 resource = "Welder")
 		
 p4 = Process(kind = "Assemble :: Welding :: X-Ray Inspection",
 			 name = "X-Ray Inspection",
 			 level = "operation",
 			 predecessor = p2,
 			 time = xrayInspectionTime,
-			 cost = xrayInspectionTime * welderCost + xrayCost)
+			 cost = xrayInspectionTime * welderCost + xrayCost,
+			 resource = ["Welder", "X-Ray Machine"])
 			 
 replace(parent, p1)

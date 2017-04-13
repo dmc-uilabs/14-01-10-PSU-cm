@@ -5,8 +5,11 @@ import numpy
 import sys
 sys.setrecursionlimit(100000)
 
+# This loads all PML files in the library/ folder and also initializes the constants.
+auto_register("library")
+
 for replication in range(25):
-    # Initialize the system (ideally, this would already be in a database)
+    # Override the constants
     set_constant("Machinist :: Labor Rate", numpy.random.poisson(59) * dollars / hour)
     set_constant("Caster :: Labor Rate", numpy.random.poisson(30) * dollars / hour)
     set_constant("General Labor :: Labor Rate", numpy.random.poisson(25) * dollars / hour)
@@ -15,17 +18,6 @@ for replication in range(25):
     set_constant("Material :: Steel :: Cost", numpy.random.poisson(0.5) * dollars / inch**3)
     set_constant("Material :: Aluminum :: Cost", numpy.random.poisson(0.8) * dollars / inch**3)
     set_constant("Material :: Paint :: Cost", numpy.random.poisson(0.2) * dollars / inch**2)
-    
-    register_file("Make", "library/make.pml")
-    register_file("Make :: Purchase", "library/purchase.pml")
-    register_file("Make :: Fabricate", "library/fabricate.pml")
-    register_file("Make :: Fabricate :: Stock Machining", "library/machining.pml")
-    register_file("Make :: Fabricate :: Plate/Sheet", "library/plate.pml")
-    register_file("Make :: Fabricate :: Casting", "library/casting.pml")
-    register_file("Make :: Fabricate :: Paint", "library/painting.pml")
-    register_file("Assemble", "library/assembly.pml")
-    register_file("Assemble :: Welding", "library/welding.pml")
-    register_file("Assemble :: Bolting", "library/bolting.pml")
     
     # Create an example two part assembly
     weldment = []
