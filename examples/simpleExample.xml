@@ -18,6 +18,11 @@
         <coatings>
         	<coating>Powder Top Coating</coating>
         </coatings>
+        <supplier>
+        	<price>14.99</price>
+        	<quantity>200</quantity>
+        	<leadTime>5</leadTime>
+        </supplier>
       </manufacturingDetails>
     </part>
     <part id="1b46e606-f302-4efb-9ee9-5ccdca90f553">

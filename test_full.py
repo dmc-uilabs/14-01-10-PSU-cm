@@ -5,7 +5,8 @@ import time
 
 overall_start_time = time.time()
 
-#logging.basicConfig(level=logging.INFO)
+# Change logging level to hide PML failed routings messages
+logging.basicConfig(level=logging.WARN)
 
 # Scan the library/ folder and its subfolders for __init__.pml files, which are
 # executed to initialize the PML "database"
@@ -16,10 +17,10 @@ print("Load PML Library Elapsed Time: %f s" % (time.time() - start_time))
 # Load the eBOM.xml file
 path = r"examples/engine_assembly"
 file = os.path.join(path, "eBOM.xml")
-#file = r"examples/simpleExample.xml"
+file = r"examples/simpleExample.xml"
 
 start_time = time.time()
-processGraph = load_ebom(file)
+processGraph = load_ebom(file, build_quantity=50)
 print("Load XML Elapsed Time: %f s" % (time.time() - start_time))
 
 # Expand the process graph using the PML models

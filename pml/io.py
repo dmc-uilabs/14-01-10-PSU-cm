@@ -6,7 +6,7 @@ from .model import *
 
 LOGGER = logging.getLogger("PML")
 
-def load_ebom(file):
+def load_ebom(file, build_quantity = 1):
     tree = ET.parse(file)
     root = tree.getroot()
     
@@ -37,17 +37,31 @@ def load_ebom(file):
                            height = float(part.find("height").text) * units[part.get("unit", "mm")],
                            surface_area = float(part.find("surface_area").text) * units[part.get("unit", "mm2")],
                            volume = float(part.find("volume").text) * units[part.get("unit", "mm3")],
-                           weight = float(part.find("weight").text) * units[part.get("unit", "kg")])
+                           weight = float(part.find("weight").text) * units[part.get("unit", "kg")],
+                           quantity = build_quantity*sum([1 for _ in part.findall("instances/instance")]))
         
         if part.find("manufacturingDetails/material") is not None:
             material = part.find("manufacturingDetails/material").text.lower()
             setattr(loaded_part, "material", "Steel" if "steel" in material else "Aluminum")
             
+        # old format for passing purchasing information
         if part.find("manufacturingDetails/price") is not None:
             setattr(loaded_part, "purchaseCost", float(part.find("manufacturingDetails/price").text) * dollars)
             
         if part.find("manufacturingDetails/leadTime") is not None:
             setattr(loaded_part, "leadTime", float(part.find("manufacturingDetails/leadTime").text) * days)
+            
+        # new format, which allows multiple supplier options with bulk quantities
+        suppliers = []
+        
+        for supplier in part.findall("manufacturingDetails/supplier"):
+            suppliers += [{
+                "purchaseCost" : float(supplier.find("price").text) * dollars,
+                "quantity" : int(supplier.find("quantity").text),
+                "leadTime" : float(supplier.find("leadTime").text) * days}]
+            
+        if len(suppliers) > 0:
+            setattr(loaded_part, "suppliers", suppliers)
             
         for coating in part.findall("manufacturingDetails/coatings/coating"):
             setattr(loaded_part, "coating", coating.text)
