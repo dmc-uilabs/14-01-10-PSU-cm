@@ -23,6 +23,11 @@
         	<quantity>200</quantity>
         	<leadTime>5</leadTime>
         </supplier>
+        <supplier>
+        	<price>12.99</price>
+        	<quantity>300</quantity>
+        	<leadTime>10</leadTime>
+        </supplier>
       </manufacturingDetails>
     </part>
     <part id="1b46e606-f302-4efb-9ee9-5ccdca90f553">

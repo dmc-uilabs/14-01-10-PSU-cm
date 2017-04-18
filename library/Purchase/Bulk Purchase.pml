@@ -5,48 +5,52 @@ if not hasattr(parent.part, "suppliers"):
 
 if not hasattr(parent.part, "quantity"):
 	fail("Part has no defined quantity")
-	
-# pick the option with the smallest excess quantity
-suppliers = parent.part.suppliers
-quantity = parent.part.quantity
-excess = sys.maxsize
-
-for supplier in suppliers:
-	if supplier["quantity"] > quantity and supplier["quantity"] - quantity < excess:
-		excess = supplier["quantity"] - quantity
-		purchaseQuantity = supplier["quantity"]
-		purchaseCost = supplier["purchaseCost"]
-		leadTime = supplier["leadTime"]
-
-if excess == sys.maxsize:
-	fail("No supplier found for the given quantity: %d" % quantity)
 
 generalLaborCost = lookup_constant("General Labor :: Labor Rate")
 
 orderTime = 5 * minutes
 receiveTime = 10 * minutes
 unboxTime = 15 * minutes
+	
+# pick the option with the smallest excess quantity
+options = []
 
-p1 = Process(kind = "Make :: Bulk Purchase :: Order",
+suppliers = parent.part.suppliers
+quantity = parent.part.quantity
+
+for supplier in suppliers:
+	if supplier["quantity"] > quantity:
+		excess = supplier["quantity"] - quantity
+		purchaseQuantity = supplier["quantity"]
+		purchaseCost = supplier["purchaseCost"]
+		leadTime = supplier["leadTime"]
+
+		p1 = Process(kind = "Make :: Bulk Purchase :: Order",
 			 name = "Order",
 			 level = "operation",
 			 time = orderTime,
 			 cost = generalLaborCost * orderTime + purchaseCost / purchaseQuantity,
 			 excess = excess)
 			 
-p2 = Process(kind = "Make :: Bulk Purchase :: Ship",
+		p2 = Process(kind = "Make :: Bulk Purchase :: Ship",
 			 name = "Ship",
 			 level = "operation",
 			 time = leadTime,
 			 cost = 0.0,
 			 predecessor = p1)
-			 
+
+		options.append((p1, p2))
+
+
+if len(options) == 0:
+	fail("No supplier found for the given quantity: %d" % quantity)
+		 
 p3 = Process(kind = "Make :: Bulk Purchase :: Receive",
 			 name = "Receive",
 			 level = "operation",
 			 time = receiveTime,
 			 cost = generalLaborCost * receiveTime,
-			 predecessor = p2)
+			 predecessor = [o[-1] for o in options])
 			 
 p4 = Process(kind = "Make :: Bulk Purchase :: Unbox",
 			 name = "Unbox",
@@ -55,4 +59,4 @@ p4 = Process(kind = "Make :: Bulk Purchase :: Unbox",
 			 cost = generalLaborCost * unboxTime,
 			 predecessor = p3)
 			 
-replace(parent, p1)
+replace(parent, [o[0] for o in options])
