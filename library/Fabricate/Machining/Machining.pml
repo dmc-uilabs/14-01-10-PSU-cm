@@ -14,10 +14,10 @@ machinistCost = lookup_constant("Machinist :: Labor Rate")
 materialCost = stockVolume * lookup_constant("Material :: %s :: Cost" % parent.part.material)
 
 # Estimate the operation times
-setupTime = 5 * minutes
-programTime = (removalVolume / inches**3) * 15 * seconds
-runTime = (removalVolume / inches**3) * 30 * seconds
-inspectTime = (removalVolume / inches**3) * 1 * second
+setupTime = lookup_constant("Machinist :: Setup Time")
+programTime = (removalVolume / inches**3) * lookup_constant("Machinist :: Program Time")
+runTime = (removalVolume / inches**3) * lookup_constant("Machinist :: Run Time")
+inspectTime = (removalVolume / inches**3) * lookup_constant("Machinist :: Inspect Time")
 
 # Create the operations
 p0 = Process(kind = "Make :: Fabricate :: Stock Machining :: Stock Material",

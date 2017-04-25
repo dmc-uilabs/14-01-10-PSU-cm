@@ -1,0 +1,118 @@
+[
+	{
+		"name" : "Machinist :: Labor Rate",
+		"value" : 59,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Machinist :: Setup Time",
+		"value" : 5,
+		"unit" : "minutes"
+	},
+	{
+		"name" : "Machinist :: Program Time",
+		"value" : 15,
+		"unit" : "seconds",
+		"help" : "per cubic inch of removal volume - as a proxy for part complexity"
+	},
+	{
+		"name" : "Machinist :: Run Time",
+		"value" : 25,
+		"unit" : "seconds",
+		"help" : "per cubic inch of removal volume - as a proxy for part complexity"
+	},
+	{
+		"name" : "Machinist :: Inspect Time",
+		"value" : 5,
+		"unit" : "seconds",
+		"help" : "per cubic inch of removal volume - as a proxy for part complexity"
+	},
+	{
+		"name" : "Caster :: Labor Rate",
+		"value" : 30,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Casting :: Melting Time",
+		"value" : 2,
+		"unit" : "seconds",
+		"help" : "per cubic inch of material"
+	},
+	{
+		"name" : "Casting :: Molding Time",
+		"value" : 90,
+		"unit" : "seconds",
+		"help" : "per cubic inch of material, investment casting only"
+	},
+	{
+		"name" : "Casting :: Holding Time",
+		"value" : 90,
+		"unit" : "seconds",
+		"help" : "per cubic inch of material, non-cored greensand casting only"
+	},
+	{
+		"name" : "Casting :: Shakeout Time",
+		"value" : 1,
+		"unit" : "minute",
+		"help" : "per part"
+	},
+	{
+		"name" : "Casting :: Cooling Time",
+		"value" : 10,
+		"unit" : "seconds",
+		"help" : "per cubic inch of material"
+	},
+	{
+		"name" : "Casting :: Finishing Time",
+		"value" : 5,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+	{
+		"name" : "Investment Casting :: Batch Volume",
+		"value" : 5,
+		"unit" : "feet**3",
+		"help" : "to estimate the number of castings performed in a single batch"
+	},
+	{
+		"name" : "General Labor :: Labor Rate",
+		"value" : 25,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Welder :: Labor Rate",
+		"value" : 40,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Plater :: Labor Rate",
+		"value" : 30,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Painter :: Labor Rate",
+		"value" : 30,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "X-Ray Machine :: Cost",
+		"value" : 10,
+		"unit" : "dollars",
+		"help" : "per usage"
+	},
+	{
+		"name" : "Material :: Steel :: Cost",
+		"value" : 0.5,
+		"unit" : "dollars / inch**3"
+	},
+	{
+		"name" : "Material :: Aluminum :: Cost",
+		"value" : 0.8,
+		"unit" : "dollars / inch**3"
+	},
+	{
+		"name" : "Material :: Paint :: Cost",
+		"value" : 0.2,
+		"unit" : "dollars / inch**2"
+	}
+]

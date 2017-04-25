@@ -7,11 +7,11 @@ material = parent.part.material
 casterCost = lookup_constant("Caster :: Labor Rate")
 materialCost = partVolume * lookup_constant("Material :: %s :: Cost" % material)
 
-meltingTime = (partVolume / inches**3) * 2 * minutes
-holdingTime = (partVolume / inches**3) * 90 * seconds
-shakeoutTime = 1 * minute
-coolingTime = (partVolume / inches**3) * 10 * seconds
-finishingTime = 5 * minutes
+meltingTime = (partVolume / inches**3) * lookup_constant("Casting :: Melting Time")
+holdingTime = (partVolume / inches**3) * lookup_constant("Casting :: Holding Time")
+shakeoutTime = lookup_constant("Casting :: Shakeout Time")
+coolingTime = (partVolume / inches**3) * lookup_constant("Casting :: Cooling Time")
+finishingTime = lookup_constant("Casting :: Finishing Time")
 
 p1 = Process(kind = "Make :: Fabricate :: Non-Cored Greensand Casting :: Charging and Melting",
 			 name = "Charging and Melting",

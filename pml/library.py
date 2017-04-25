@@ -3,8 +3,12 @@ Library of Process Models
 '''
 
 import os
+import json
+import logging
 from .exceptions import fail
 from .units import *
+
+LOGGER = logging.getLogger("PML")
 
 # Case insensitive dictionary for string keys courtesy of http://stackoverflow.com/a/32888599
 class CaseInsensitiveDict(dict):
@@ -51,7 +55,7 @@ def register_script(type, script, filename="script"):
         CACHE[type] = [compiled_script]
 
 def register_file(type, file):
-    print("Registering", file, "as", type)
+    LOGGER.info("Registering %s as %s", file, type)
     with open(file) as fp:
         register_script(type, fp.read(), filename=file)
     
@@ -92,3 +96,17 @@ def lookup_constant(key, default_value = None):
     
 def set_constant(key, value):
     CONSTANTS[key] = value
+    
+def load_constants(file):
+    with open(file, "r") as f:
+        content = json.load(f)
+        
+    for item in content:
+        name = item["name"]
+        value = item["value"]
+        unit = eval(item["unit"], {}, globals())
+        set_constant(name, value * unit)
+
+def print_constants():
+    for key in CONSTANTS.keys():
+        print(key, CONSTANTS[key])
