@@ -18,9 +18,9 @@ batchQuantity = math.floor(lookup_constant("Investment Casting :: Batch Volume")
 batches = math.ceil(parent.part.quantity / min(batchQuantity, parent.part.quantity))
 
 meltingTime = (partVolume / inches**3) * lookup_constant("Casting :: Melting Time")
-moldingTime = (partVolume / inches**3) * lookup_constant("Casting :: Molding Time") / batches
-shakeoutTime = lookup_constant("Casting :: Shakeout Time") / batches
-coolingTime = (partVolume / inches**3) * lookup_constant("Casting :: Cooling Time") / batches
+moldingTime = (partVolume / inches**3) * lookup_constant("Casting :: Molding Time")
+shakeoutTime = lookup_constant("Casting :: Shakeout Time")
+coolingTime = (partVolume / inches**3) * lookup_constant("Casting :: Cooling Time")
 finishingTime = lookup_constant("Casting :: Finishing Time")
 
 p1 = Process(kind = "Make :: Fabricate :: Investment Casting :: Melting",
@@ -34,7 +34,7 @@ p2 = Process(kind = "Make :: Fabricate :: Investment Casting :: Molding and Pour
 			 name = "Molding and Pouring",
 			 level = "operation",
 			 time = moldingTime,
-			 cost = casterCost * moldingTime,
+			 cost = casterCost * moldingTime / batches,
 			 resource = ["Caster"],
 			 predecessor = p1)
 			 
@@ -42,7 +42,7 @@ p3 = Process(kind = "Make :: Fabricate :: Investment Casting :: Shakeout",
 			 name = "Shakeout",
 			 level = "operation",
 			 time = shakeoutTime,
-			 cost = casterCost * shakeoutTime,
+			 cost = casterCost * shakeoutTime / batches,
 			 resource = ["Caster"],
 			 predecessor = p2)
 			 
@@ -50,7 +50,7 @@ p4 = Process(kind = "Make :: Fabricate :: Investment Casting :: Cooling",
 			 name = "Cooling",
 			 level = "operation",
 			 time = coolingTime,
-			 cost = casterCost * coolingTime,
+			 cost = casterCost * coolingTime / batches,
 			 resource = ["Caster"],
 			 predecessor = p3)
 			 

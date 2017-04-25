@@ -80,9 +80,51 @@
 		"unit" : "dollars / hour"
 	},
 	{
+		"name" : "General Labor :: Bolt Time",
+		"value" : 30,
+		"unit" : "seconds"
+	},
+	{
+		"name" : "General Labor :: Order Time",
+		"value" : 5,
+		"unit" : "minutes",
+		"help" : "time to place a single or bulk order"
+	},
+	{
+		"name" : "General Labor :: Receive Time",
+		"value" : 10,
+		"unit" : "minutes",
+		"help" : "time to receive a single or bulk order at the facility (unload truck, check manifest, etc.)"
+	},
+	{
+		"name" : "General Labor :: Unbox Time",
+		"value" : 15,
+		"unit" : "minutes",
+		"help" : "time to unbox a single or bulk order"
+	},
+	{
 		"name" : "Welder :: Labor Rate",
 		"value" : 40,
 		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Welder :: Prepare Time",
+		"value" : 30,
+		"unit" : "seconds",
+		"help" : "per inch of weld"
+	},
+	{
+		"name" : "Welder :: Weld Time",
+		"value" : 2,
+		"unit" : "minutes",
+		"help" : "per inch of weld",
+		"todo" : "possibly have different weld times for different weld processes"
+	},
+	{
+		"name" : "Welder :: Visual Inspection Time",
+		"value" : 2,
+		"unit" : "seconds",
+		"help" : "per inch of weld"
 	},
 	{
 		"name" : "Plater :: Labor Rate",
@@ -101,6 +143,18 @@
 		"help" : "per usage"
 	},
 	{
+		"name" : "X-Ray Machine :: Setup Time",
+		"value" : 10,
+		"unit" : "minutes",
+		"help" : "per usage"
+	},
+	{
+		"name" : "X-Ray Machine :: Scan Time",
+		"value" : 5,
+		"unit" : "seconds",
+		"help" : "per inch of weld"
+	},
+	{
 		"name" : "Material :: Steel :: Cost",
 		"value" : 0.5,
 		"unit" : "dollars / inch**3"
@@ -114,5 +168,10 @@
 		"name" : "Material :: Paint :: Cost",
 		"value" : 0.2,
 		"unit" : "dollars / inch**2"
+	},
+	{
+		"name" : "Material :: Weld Filler :: Cost",
+		"value" : 2,
+		"unit" : "dollars / inch"
 	}
 ]

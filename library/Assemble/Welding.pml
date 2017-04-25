@@ -16,12 +16,12 @@ if twoSided:
 	
 welderCost = lookup_constant("Welder :: Labor Rate")
 xrayCost = lookup_constant("X-Ray Machine :: Cost")
-weldMaterialCost = 2 * dollars / inch
+weldMaterialCost = lookup_constant("Material :: Weld Filler :: Cost")
 
-prepareTime = (weldLength / inches) * 30 * seconds
-weldTime = (weldLength / inches) * 2 * minutes
-visualInspectionTime = (weldLength / inches) * 5 * seconds
-xrayInspectionTime = (10 * minutes) + ((weldLength / inches) * 5 * seconds)
+prepareTime = (weldLength / inches) * lookup_constant("Welder :: Prepare Time")
+weldTime = (weldLength / inches) * lookup_constant("Welder :: Weld Time")
+visualInspectionTime = (weldLength / inches) * lookup_constant("Welder :: Visual Inspection Time")
+xrayInspectionTime = lookup_constant("X-Ray Machine :: Setup Time") + ((weldLength / inches) * lookup_constant("X-Ray Machine :: Scan Time"))
 	
 p1 = Process(kind = "Assemble :: Welding :: Prepare Joint",
 			 name = "Prepare Joint",

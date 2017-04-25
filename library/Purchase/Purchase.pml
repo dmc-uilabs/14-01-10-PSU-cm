@@ -5,15 +5,15 @@ purchaseCost = parent.part.purchaseCost
 leadTime = parent.part.leadTime if hasattr(parent.part, "leadTime") else 7 * days
 generalLaborCost = lookup_constant("General Labor :: Labor Rate")
 
-orderTime = 5 * minutes
-receiveTime = 10 * minutes
-unboxTime = 15 * minutes
+orderTime = lookup_constant("General Labor :: Order Time")
+receiveTime = lookup_constant("General Labor :: Receive Time")
+unboxTime = lookup_constant("General Labor :: Unbox Time")
 
 p1 = Process(kind = "Make :: Purchase :: Order",
 			 name = "Order",
 			 level = "operation",
 			 time = orderTime,
-			 cost = generalLaborCost * orderTime + purchaseCost)
+			 cost = (generalLaborCost * orderTime) / parent.part.quantity + purchaseCost)
 			 
 p2 = Process(kind = "Make :: Purchase :: Ship",
 			 name = "Ship",
@@ -26,14 +26,14 @@ p3 = Process(kind = "Make :: Purchase :: Receive",
 			 name = "Receive",
 			 level = "operation",
 			 time = receiveTime,
-			 cost = generalLaborCost * receiveTime,
+			 cost = generalLaborCost * receiveTime / parent.part.quantity,
 			 predecessor = p2)
 			 
 p4 = Process(kind = "Make :: Purchase :: Unbox",
 			 name = "Unbox",
 			 level = "operation",
 			 time = unboxTime,
-			 cost = generalLaborCost * unboxTime,
+			 cost = generalLaborCost * unboxTime / parent.part.quantity,
 			 predecessor = p3)
 			 
 replace(parent, p1)

@@ -8,9 +8,9 @@ if not hasattr(parent.part, "quantity"):
 
 generalLaborCost = lookup_constant("General Labor :: Labor Rate")
 
-orderTime = 5 * minutes
-receiveTime = 10 * minutes
-unboxTime = 15 * minutes
+orderTime = lookup_constant("General Labor :: Order Time")
+receiveTime = lookup_constant("General Labor :: Receive Time")
+unboxTime = lookup_constant("General Labor :: Unbox Time")
 	
 # pick the option with the smallest excess quantity
 options = []
@@ -29,7 +29,7 @@ for supplier in suppliers:
 			 name = "Order",
 			 level = "operation",
 			 time = orderTime,
-			 cost = generalLaborCost * orderTime + purchaseCost / purchaseQuantity,
+			 cost = (generalLaborCost * orderTime) / parent.part.quantity + purchaseCost / parent.part.quantity,
 			 excess = excess)
 			 
 		p2 = Process(kind = "Make :: Bulk Purchase :: Ship",
@@ -49,14 +49,14 @@ p3 = Process(kind = "Make :: Bulk Purchase :: Receive",
 			 name = "Receive",
 			 level = "operation",
 			 time = receiveTime,
-			 cost = generalLaborCost * receiveTime,
+			 cost = generalLaborCost * receiveTime / parent.part.quantity,
 			 predecessor = [o[-1] for o in options])
 			 
 p4 = Process(kind = "Make :: Bulk Purchase :: Unbox",
 			 name = "Unbox",
 			 level = "operation",
 			 time = unboxTime,
-			 cost = generalLaborCost * unboxTime,
+			 cost = generalLaborCost * unboxTime / parent.part.quantity,
 			 predecessor = p3)
 			 
 replace(parent, [o[0] for o in options])
