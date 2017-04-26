@@ -4,7 +4,7 @@ if not hasattr(parent.part, "material"):
 partVolume = parent.part.volume
 material = parent.part.material
 
-casterCost = lookup_constant("Caster :: Labor Rate")
+casterCost = lookup_constant("Casting :: Labor Rate")
 materialCost = partVolume * lookup_constant("Material :: %s :: Cost" % material)
 
 meltingTime = (partVolume / inches**3) * lookup_constant("Casting :: Melting Time")

@@ -1,34 +1,34 @@
 [
 	{
-		"name" : "Machinist :: Labor Rate",
+		"name" : "Machining :: Labor Rate",
 		"value" : 59,
 		"unit" : "dollars / hour"
 	},
 	{
-		"name" : "Machinist :: Setup Time",
+		"name" : "Machining :: Setup Time",
 		"value" : 5,
 		"unit" : "minutes"
 	},
 	{
-		"name" : "Machinist :: Program Time",
+		"name" : "Machining :: Program Time",
 		"value" : 15,
 		"unit" : "seconds",
 		"help" : "per cubic inch of removal volume - as a proxy for part complexity"
 	},
 	{
-		"name" : "Machinist :: Run Time",
+		"name" : "Machining :: Run Time",
 		"value" : 25,
 		"unit" : "seconds",
 		"help" : "per cubic inch of removal volume - as a proxy for part complexity"
 	},
 	{
-		"name" : "Machinist :: Inspect Time",
+		"name" : "Machining :: Inspect Time",
 		"value" : 5,
 		"unit" : "seconds",
 		"help" : "per cubic inch of removal volume - as a proxy for part complexity"
 	},
 	{
-		"name" : "Caster :: Labor Rate",
+		"name" : "Casting :: Labor Rate",
 		"value" : 30,
 		"unit" : "dollars / hour"
 	},
@@ -103,38 +103,134 @@
 		"help" : "time to unbox a single or bulk order"
 	},
 	{
-		"name" : "Welder :: Labor Rate",
+		"name" : "Welding :: Labor Rate",
 		"value" : 40,
 		"unit" : "dollars / hour"
 	},
 	{
-		"name" : "Welder :: Prepare Time",
+		"name" : "Welding :: Prepare Time",
 		"value" : 30,
 		"unit" : "seconds",
 		"help" : "per inch of weld"
 	},
 	{
-		"name" : "Welder :: Weld Time",
+		"name" : "Welding :: Weld Time",
 		"value" : 2,
 		"unit" : "minutes",
 		"help" : "per inch of weld",
 		"todo" : "possibly have different weld times for different weld processes"
 	},
 	{
-		"name" : "Welder :: Visual Inspection Time",
+		"name" : "Welding :: Visual Inspection Time",
 		"value" : 2,
 		"unit" : "seconds",
 		"help" : "per inch of weld"
 	},
 	{
-		"name" : "Plater :: Labor Rate",
+		"name" : "Plating :: Labor Rate",
 		"value" : 30,
 		"unit" : "dollars / hour"
 	},
 	{
-		"name" : "Painter :: Labor Rate",
+		"name" : "Plating :: Setup Time",
+		"value" : 5,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+	{
+		"name" : "Plating :: Stripping Time",
+		"value" : 30,
+		"unit" : "seconds",
+		"help" : "per square inch of surface area"
+	},
+	{
+		"name" : "Plating :: Blasting Time",
+		"value" : 20,
+		"unit" : "seconds",
+		"help" : "per square inch of surface area"
+	},
+	{
+		"name" : "Plating :: Plating Time",
+		"value" : 60,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+	{
+		"name" : "Plating :: Phosphate Coating :: Preparation Time",
+		"value" : 15,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+	{
+		"name" : "Plating :: Phosphate Coating :: Cleaning Time",
+		"value" : 10,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+		{
+		"name" : "Plating :: Phosphate Coating :: Activation Time",
+		"value" : 20,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+		{
+		"name" : "Plating :: Phosphate Coating :: Phosphating Time",
+		"value" : 60,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+		{
+		"name" : "Plating :: Phosphate Coating :: Treatment Time",
+		"value" : 20,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+	{
+		"name" : "Painting :: Labor Rate",
 		"value" : 30,
 		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Painting :: Washing Time",
+		"value" : 6,
+		"unit" : "seconds",
+		"help" : "per square inch of surface area"
+	},
+	{
+		"name" : "Painting :: Masking Time",
+		"value" : 6,
+		"unit" : "seconds",
+		"help" : "per square inch of surface area"
+	},
+	{
+		"name" : "Painting :: Apply Time",
+		"value" : 3,
+		"unit" : "seconds",
+		"help" : "per square inch of surface area"
+	},
+	{
+		"name" : "Painting :: Curing Time",
+		"value" : 30,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+	{
+		"name" : "Painting :: Drying Time",
+		"value" : 60,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+	{
+		"name" : "Painting :: Inspecting Time",
+		"value" : 10,
+		"unit" : "minutes",
+		"help" : "per part"
+	},
+	{
+		"name" : "Painting :: Finishing Time",
+		"value" : 30,
+		"unit" : "minutes",
+		"help" : "per part"
 	},
 	{
 		"name" : "X-Ray Machine :: Cost",
@@ -167,6 +263,11 @@
 	{
 		"name" : "Material :: Paint :: Cost",
 		"value" : 0.2,
+		"unit" : "dollars / inch**2"
+	},
+	{
+		"name" : "Material :: Powder :: Cost",
+		"value" : 0.3,
 		"unit" : "dollars / inch**2"
 	},
 	{

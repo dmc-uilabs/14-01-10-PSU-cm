@@ -1,5 +1,3 @@
-register_file("Make :: Fabricate :: Priming", "Priming.pml")
-register_file("Make :: Fabricate :: Paint", "Painting.pml")
 register_file("Make :: Fabricate :: Chromium Plating", "Chromium Plating.pml")
 register_file("Make :: Fabricate :: Zinc Plating", "Zinc Plating.pml")
 register_file("Make :: Fabricate :: Liquid Priming", "Liquid Priming.pml")

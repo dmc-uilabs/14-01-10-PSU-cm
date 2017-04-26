@@ -14,13 +14,13 @@ for part in parts:
 if twoSided:
 	weldLength *= 2
 	
-welderCost = lookup_constant("Welder :: Labor Rate")
+welderCost = lookup_constant("Welding :: Labor Rate")
 xrayCost = lookup_constant("X-Ray Machine :: Cost")
 weldMaterialCost = lookup_constant("Material :: Weld Filler :: Cost")
 
-prepareTime = (weldLength / inches) * lookup_constant("Welder :: Prepare Time")
-weldTime = (weldLength / inches) * lookup_constant("Welder :: Weld Time")
-visualInspectionTime = (weldLength / inches) * lookup_constant("Welder :: Visual Inspection Time")
+prepareTime = (weldLength / inches) * lookup_constant("Welding :: Prepare Time")
+weldTime = (weldLength / inches) * lookup_constant("Welding :: Weld Time")
+visualInspectionTime = (weldLength / inches) * lookup_constant("Welding :: Visual Inspection Time")
 xrayInspectionTime = lookup_constant("X-Ray Machine :: Setup Time") + ((weldLength / inches) * lookup_constant("X-Ray Machine :: Scan Time"))
 	
 p1 = Process(kind = "Assemble :: Welding :: Prepare Joint",
@@ -46,13 +46,13 @@ if not requiresXRay:
 				 time = visualInspectionTime,
 				 cost = visualInspectionTime * welderCost,
 				 resource = "Welder")
-		
-p4 = Process(kind = "Assemble :: Welding :: X-Ray Inspection",
-			 name = "X-Ray Inspection",
-			 level = "operation",
-			 predecessor = p2,
-			 time = xrayInspectionTime,
-			 cost = xrayInspectionTime * welderCost + xrayCost,
-			 resource = ["Welder", "X-Ray Machine"])
+else:	
+	p3 = Process(kind = "Assemble :: Welding :: X-Ray Inspection",
+			 	 name = "X-Ray Inspection",
+			 	 level = "operation",
+			 	 predecessor = p2,
+			 	 time = xrayInspectionTime,
+			 	 cost = xrayInspectionTime * welderCost + xrayCost,
+			 	 resource = ["Welder", "X-Ray Machine"])
 			 
 replace(parent, p1)

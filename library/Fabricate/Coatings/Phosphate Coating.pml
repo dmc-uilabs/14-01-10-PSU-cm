@@ -1,11 +1,23 @@
-laborCost = lookup_constant("Plater :: Labor Rate")
-setupTime = 5 * minutes
-preparationTime = 15 * minutes
-cleaningTime = 10 * minutes
-activationTime = 20 * minutes
-phosphatingTime = 60 * minutes
-treatmentTime = 20 * minutes
+# estimate the surface area of the part or assembly
+if hasattr(parent, "part"):
+	surfaceArea = parent.part.surface_area
+elif hasattr(parent, "parts"):
+	surfaceArea = sum([p.surface_area for p in parent.parts])
+else:
+	fail("Missing part or parts attributes")
 
+# get plating labor cost
+laborCost = lookup_constant("Plating :: Labor Rate")
+
+# estimate plating times
+setupTime = lookup_constant("Plating :: Setup Time")
+preparationTime = lookup_constant("Plating :: Phosphate Coating :: Preparation Time")
+cleaningTime = lookup_constant("Plating :: Phosphate Coating :: Cleaning Time")
+activationTime = lookup_constant("Plating :: Phosphate Coating :: Activation Time")
+phosphatingTime = lookup_constant("Plating :: Phosphate Coating :: Phosphating Time")
+treatmentTime = lookup_constant("Plating :: Phosphate Coating :: Treatment Time")
+
+# create the plating operations
 p1 = Process(kind = "Make :: Fabricate :: Phosphate Coating :: Setup",
 			 name = "Setup",
 			 level = "operation",

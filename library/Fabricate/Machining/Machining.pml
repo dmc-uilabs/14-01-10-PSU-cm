@@ -8,16 +8,16 @@ partVolume = parent.part.volume
 removalVolume = stockVolume - partVolume
 
 # Lookup the machinist labor rate from the database
-machinistCost = lookup_constant("Machinist :: Labor Rate")
+machinistCost = lookup_constant("Machining :: Labor Rate")
 
 # Estimate the material cost (currently supports Steel and Aluminum)
 materialCost = stockVolume * lookup_constant("Material :: %s :: Cost" % parent.part.material)
 
 # Estimate the operation times
-setupTime = lookup_constant("Machinist :: Setup Time")
-programTime = (removalVolume / inches**3) * lookup_constant("Machinist :: Program Time")
-runTime = (removalVolume / inches**3) * lookup_constant("Machinist :: Run Time")
-inspectTime = (removalVolume / inches**3) * lookup_constant("Machinist :: Inspect Time")
+setupTime = lookup_constant("Machining :: Setup Time")
+programTime = (removalVolume / inches**3) * lookup_constant("Machining :: Program Time")
+runTime = (removalVolume / inches**3) * lookup_constant("Machining :: Run Time")
+inspectTime = (removalVolume / inches**3) * lookup_constant("Machining :: Inspect Time")
 
 # Create the operations
 p0 = Process(kind = "Make :: Fabricate :: Stock Machining :: Stock Material",

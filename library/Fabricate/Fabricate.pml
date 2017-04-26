@@ -14,24 +14,13 @@ p3 = Process(kind = "Make :: Fabricate :: Plate/Sheet",
 			 part = parent.part)
 			 
 if hasattr(parent.part, "coating"):
-	if parent.part.coating == "Paint":
-		p4 = Process(kind = "Make :: Fabricate :: Priming",
-					 name = "Priming",
-					 level = "task",
-					 part = parent.part,
-					 predecessor = [p1, p2, p3])
-		p5 = Process(kind = "Make :: Fabricate :: Paint",
-					 name = "Paint",
-					 level = "task",
-					 part = parent.part,
-					 predecessor = p4)
-	elif parent.part.coating == "Chromium Plating":
+	if parent.part.coating == "Chromium Plating":
 		p4 = Process(kind = "Make :: Fabricate :: Chromium Plating",
 					 name = "Chromium Plating",
 					 level = "task",
 					 part = parent.part,
 					 predecessor = [p1, p2, p3])
-	elif parent.part.coating == "Liquid Top Coating":
+	elif parent.part.coating == "Paint" or parent.part.coating == "Liquid Top Coating":
 		p4 = Process(kind = "Make :: Fabricate :: Liquid Priming",
 					 name = "Liquid Priming",
 					 level = "task",
@@ -42,7 +31,7 @@ if hasattr(parent.part, "coating"):
 					 level = "task",
 					 part = parent.part,
 					 predecessor = p4)
-	elif parent.part.coating == "Powder Top Coating":
+	elif parent.part.coating == "Powder" or parent.part.coating == "Powder Top Coating":
 		p4 = Process(kind = "Make :: Fabricate :: Powder Priming",
 					 name = "Powder Priming",
 					 level = "task",

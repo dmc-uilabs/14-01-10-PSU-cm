@@ -1,5 +1,4 @@
-# Priming can occur either on individual parts or on assemblies.
-# Here, we estimate the priming cost by using the surface area.
+# estimate the surface area of the part or assembly
 if hasattr(parent, "part"):
 	surfaceArea = parent.part.surface_area
 elif hasattr(parent, "parts"):
@@ -7,20 +6,21 @@ elif hasattr(parent, "parts"):
 else:
 	fail("Missing part or parts attributes")
 
-# Lookup constants from the database
-generalLaborCost = lookup_constant("Painter :: Labor Rate")
-paintCost = lookup_constant("Material :: Paint :: Cost")
+# lookup costs from the database
+generalLaborCost = lookup_constant("Painting :: Labor Rate")
+paintCost = lookup_constant("Material :: Powder :: Cost")
 
-# Estimate the costs and times
+# estimate material cost from surface area
 materialCost = surfaceArea * paintCost
 
-washingTime = (surfaceArea / inches**2) * 6 * seconds
-maskingTime = (surfaceArea / inches**2) * 6 * seconds
-applyTime = (surfaceArea / inches**2) * 3 * seconds
-curingTime = 30 * minutes
-dryingTime = 60 * minutes
+# estimate painting times using surface area
+washingTime = (surfaceArea / inches**2) * lookup_constant("Painting :: Washing Time")
+maskingTime = (surfaceArea / inches**2) * lookup_constant("Painting :: Masking Time")
+applyTime = (surfaceArea / inches**2) * lookup_constant("Painting :: Apply Time")
+curingTime = lookup_constant("Painting :: Curing Time")
+dryingTime = lookup_constant("Painting :: Drying Time")
 
-# Create each of the operations
+# create each of the operations
 p1 = Process(kind = "Make :: Fabricate :: Powder Priming :: Pre-Treat Washing",
 			 name = "Pre-Treat Washing",
 			 level = "operation",
@@ -68,6 +68,4 @@ p6 = Process(kind = "Make :: Fabricate :: Powder Prime :: Masking",
 			 cost = generalLaborCost * maskingTime,
 			 resource = "Painter")
 			
-# Finally, link the parent (in this case, the Powder Priming task) to the
-# operation chain starting at p1. 
 replace(parent, p1)

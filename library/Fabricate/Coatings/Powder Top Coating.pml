@@ -1,5 +1,4 @@
-# Painting can occur either on individual parts or on assemblies.
-# Here, we estimate the painting cost by using the surface area.
+# estimate the surface area of the part or assembly
 if hasattr(parent, "part"):
 	surfaceArea = parent.part.surface_area
 elif hasattr(parent, "parts"):
@@ -7,24 +6,24 @@ elif hasattr(parent, "parts"):
 else:
 	fail("Missing part or parts attributes")
 
-# Lookup constants from the database
-generalLaborCost = lookup_constant("Painter :: Labor Rate")
-paintCost = lookup_constant("Material :: Paint :: Cost")
+# lookup costs from the database
+laborCost = lookup_constant("Painting :: Labor Rate")
+paintCost = lookup_constant("Material :: Powder :: Cost")
 
-# Estimate the costs and times
+# estimate material cost from surface area
 materialCost = surfaceArea * paintCost
 
-movingTime = (surfaceArea / inches**2) * 6 * seconds
-applyTime = (surfaceArea / inches**2) * 3 * seconds
-curingTime = 30 * minutes
-inspectingTime = 10 * minutes
+# estimate painting times using surface area
+applyTime = (surfaceArea / inches**2) * lookup_constant("Painting :: Apply Time")
+curingTime = lookup_constant("Painting :: Curing Time")
+inspectingTime = lookup_constant("Painting :: Inspecting Time")
 
-# Create each of the operations			 
+# create each of the operations			 
 p1 = Process(kind = "Make :: Fabricate :: Powder Top Coating :: Apply Paint",
 			 name = "Apply Paint",
 			 level = "operation",
 			 time = applyTime,
-			 cost = generalLaborCost * applyTime + materialCost,
+			 cost = laborCost * applyTime + materialCost,
 			 resource = "Painter")
 			 
 p2 = Process(kind = "Make :: Fabricate :: Powder Top Coating :: Curing",
@@ -32,7 +31,7 @@ p2 = Process(kind = "Make :: Fabricate :: Powder Top Coating :: Curing",
 			 level = "operation",
 			 predecessor = p1,
 			 time = curingTime,
-			 cost = generalLaborCost * curingTime,
+			 cost = laborCost * curingTime,
 			 resource = "Painter")
 
 p3 = Process(kind = "Make :: Fabricate :: Powder Top Coating :: Inspecting",
@@ -40,9 +39,7 @@ p3 = Process(kind = "Make :: Fabricate :: Powder Top Coating :: Inspecting",
 			 level = "operation",
 			 predecessor = p2,
 			 time = inspectingTime,
-			 cost = generalLaborCost * inspectingTime,
+			 cost = laborCost * inspectingTime,
 			 resource = "Painter")
 			
-# Finally, link the parent (in this case, the Powder Top Coating task) to the
-# operation chain starting at p1. 
 replace(parent, p1)

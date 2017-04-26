@@ -1,9 +1,21 @@
-laborCost = lookup_constant("Plater :: Labor Rate")
-setupTime = 5 * minutes
-strippingTime = 30 * minutes
-blastingTime = 20 * minutes
-platingTime = 60 * minutes
+# estimate the surface area of the part or assembly
+if hasattr(parent, "part"):
+	surfaceArea = parent.part.surface_area
+elif hasattr(parent, "parts"):
+	surfaceArea = sum([p.surface_area for p in parent.parts])
+else:
+	fail("Missing part or parts attributes")
 
+# get plating labor cost
+laborCost = lookup_constant("Plating :: Labor Rate")
+
+# estimate plating times
+setupTime = lookup_constant("Plating :: Setup Time")
+strippingTime = (surfaceArea / inches**2) * lookup_constant("Plating :: Stripping Time")
+blastingTime = (surfaceArea / inches**2) * lookup_constant("Plating :: Blasting Time")
+platingTime = lookup_constant("Plating :: Plating Time")
+
+# create the plating operations
 p0 = Process(kind = "Make :: Fabricate :: Chromium Plating :: Setup",
 			 name = "Setup",
 			 level = "operation",

@@ -9,25 +9,27 @@ partVolume = parent.part.length * parent.part.width * parent.part.height
 if thickness > 1 * inch:
 	fail("Part is too thick for plate/sheet")
 	
-machinistCost = lookup_constant("Machinist :: Labor Rate")
+machinistCost = lookup_constant("Machining :: Labor Rate")
 materialCost = partVolume * lookup_constant("Material :: %s :: Cost" % parent.part.material)
-setupTime = 5 * minutes
-programTime = (cutLength / inches**2) * 15 * seconds
-runTime = (cutLength / inches**2) * 30 * seconds
-inspectTime = (cutLength / inches**2) * 1 * second
+
+setupTime = lookup_constant("Machining :: Setup Time")
+programTime = (cutLength / inches**2) * lookup_constant("Machining :: Program Time")
+runTime = (cutLength / inches**2) * lookup_constant("Machining :: Run Time")
+inspectTime = (cutLength / inches**2) * lookup_constant("Machining :: Inspect Time")
 
 p0 = Process(kind = "Make :: Fabricate :: Stock Machining :: Stock Material",
 			 name = "Stock Material",
 			 level = "operation",
 			 time = 5 * minutes,
 			 cost = materialCost,
-			 requires = ["Welder"])
+			 requires = "Machinist")
 
 p1 = Process(kind = "Make :: Fabricate :: Plate/Sheet :: Setup",
 			 name = "Setup",
 			 level = "operation",
 			 time = setupTime,
 			 cost = machinistCost * setupTime,
+			 requires = "Machinist",
 			 predecessor = p0)
 			 
 p2 = Process(kind = "Make :: Fabricate :: Plate/Sheet :: Program",
@@ -35,6 +37,7 @@ p2 = Process(kind = "Make :: Fabricate :: Plate/Sheet :: Program",
 			 level = "operation",
 			 time = programTime,
 			 cost = machinistCost * programTime,
+			 requires = "Machinist",
 			 predecessor = p1)
 			 
 p3 = Process(kind = "Make :: Fabricate :: Plate/Sheet :: Run",
@@ -42,6 +45,7 @@ p3 = Process(kind = "Make :: Fabricate :: Plate/Sheet :: Run",
 			 level = "operation",
 			 time = runTime,
 			 cost = machinistCost * runTime,
+			 requires = "Machinist",
 			 predecessor = p2)
 			 
 p4 = Process(kind = "Make :: Fabricate :: Plate/Sheet :: Inspect",
@@ -49,6 +53,7 @@ p4 = Process(kind = "Make :: Fabricate :: Plate/Sheet :: Inspect",
 			 level = "operation",
 			 time = inspectTime,
 			 cost = machinistCost * inspectTime,
+			 requires = "Machinist",
 			 predecessor = p3)
 		
 replace(parent, p0)
