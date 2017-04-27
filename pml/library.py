@@ -104,8 +104,12 @@ def load_constants(file):
     for item in content:
         name = item["name"]
         value = item["value"]
-        unit = eval(item["unit"], {}, globals())
-        set_constant(name, value * unit)
+        
+        if "unit" in item:
+            unit = eval(item["unit"], {}, globals())
+            value *= unit
+            
+        set_constant(name, value)
 
 def print_constants():
     for key in CONSTANTS.keys():

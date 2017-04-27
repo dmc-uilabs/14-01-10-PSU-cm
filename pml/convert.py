@@ -1,17 +1,24 @@
 import networkx as nx
-from .units import *
-import numpy
-import re
-from .analysis import *
+from .units import as_dollars
 
 levels = { "activity" : "red",
            "task" : "green",
            "operation" : "orange" }
 
+def calc_weight(process, weight, default_weight = 0):
+    if hasattr(weight, "__call__"):
+        try:
+            return weight(process)
+        except:
+            return default_weight
+    elif hasattr(process, weight):
+        return getattr(process, weight)
+    else:
+        return default_weight
 
-
-
-def as_networkx(graph, weight="cost",simvar=1):
+def as_networkx(graph, weight="cost"):
+    '''Converts a PML Graph to a NetworkX graph while assigning weights to the
+       edges.'''
     processes = graph.processes
     graph = nx.DiGraph()
     
@@ -30,7 +37,6 @@ def as_networkx(graph, weight="cost",simvar=1):
         pick = unprocessed.pop()
         counter += 1
         
-        #print("Adding node " + pick.name + " with id " + str(counter))
         id_map[pick] = str(counter)
         graph.add_node(pick)
         processed.add(pick)
@@ -41,28 +47,14 @@ def as_networkx(graph, weight="cost",simvar=1):
                 
     for node in processed:
         for successor in node.successors:
-            if weight=="linearcomb":
-                wv1=getattr(node,"cost") if hasattr(node,"cost") else 0; wv2=getattr(node,"time") if hasattr(node,"time") else 0
-                weight_value=.5*(preprocv2(wv1,simvar,"cost"))+.5*(preprocv2(wv2,simvar,"time"))
-            if weight=="cost":
-                 tw = getattr(node, "cost") if hasattr(node, "cost") else 0
-            #print("Adding edge between " + node.name + " and " + successor.name + " with weight " + str(weight_value))
-                 weight_value=preprocv2(tw, simvar, weight)
-            if weight=="time":
-                 tw = getattr(node, "time") if hasattr(node, "time") else 0
-            #print("Adding edge between " + node.name + " and " + successor.name + " with weight " + str(weight_value))
-                 weight_value=preprocv2(tw, simvar, weight)     
-            #print(weight_value)
-            graph.add_edge(node, successor, **{weight : weight_value})
-           
+            weight_value = calc_weight(node, weight)
+            graph.add_edge(node, successor, weight = weight_value)
             
     return graph
 
-
-
-
-
 def as_graph(processes):
+    '''Converts the given processes to a PyDot graph which can be displayed
+       using GraphVis.'''
     import pydotplus as pydot
     
     graph = pydot.Dot(graph_type="digraph")
@@ -82,7 +74,6 @@ def as_graph(processes):
         pick = unprocessed.pop()
         counter += 1
         
-        #print("Adding node " + pick.name + " with id " + str(counter))
         id_map[pick] = str(counter)
         node = pydot.Node(id_map[pick],
                           label=pick.name + (("[" + as_dollars(pick.cost) + "]") if hasattr(pick, "cost") else ""),
@@ -97,12 +88,12 @@ def as_graph(processes):
                 
     for node in processed:
         for successor in node.successors:
-            #print("Adding edge between " + node.name + " and " + successor.name)
             edge = pydot.Edge(id_map[node], id_map[successor])
             graph.add_edge(edge)
             
     return graph
 
 def as_png(graph, file):
+    '''Saves the given PML Graph to a PNG image using GraphVis.'''
     graph = as_graph(graph.processes)
     graph.write_png(file)

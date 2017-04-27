@@ -1,5 +1,10 @@
 [
 	{
+		"name" : "Documentation",
+		"value" : ["The values contained in this file do not necessarily reflect actual times",
+				   "and should be calibrated for a particular facility before use."]
+	},
+	{
 		"name" : "Machining :: Labor Rate",
 		"value" : 59,
 		"unit" : "dollars / hour"
@@ -11,8 +16,8 @@
 	},
 	{
 		"name" : "Machining :: Program Time",
-		"value" : 15,
-		"unit" : "seconds",
+		"value" : 2,
+		"unit" : "minutes",
 		"help" : "per cubic inch of removal volume - as a proxy for part complexity"
 	},
 	{

@@ -1,98 +1,78 @@
 from pml import *
 import logging
 import networkx as nx
+import time
 
-#logging.basicConfig(level=logging.INFO)
+overall_start_time = time.time()
 
-# Initialize the system
+# Change logging level to hide PML failed routings messages
+logging.basicConfig(level=logging.WARN)
+
+# Scan the library/ folder and its subfolders for __init__.pml files, which are
+# executed to initialize the PML "database"
+start_time = time.time()
 auto_register("library")
+print("Load PML Library Elapsed Time: %f s" % (time.time() - start_time))
 
-# Create an example two part assembly
-partA = Part(name = "Part A",
-             length = 5 * inches,
-             width = 2 * inches,
-             height = 7 * inches,
-             purchaseCost = 5 * dollars,
-             volume = 38 * inches**3,
-             surface_area = 28 * inches**2,
-             material = "Steel")
+# Load the eBOM.xml file
+path = r"examples/engine_assembly"
+file = os.path.join(path, "eBOM.xml")
+file = r"examples/simpleExample.xml"
 
-partB = Part(name = "Part B",
-             length = 5 * inches,
-             width = 10 * inches,
-             height = 0.5 * inches,
-             volume = 20 * inches**3,
-             surface_area = 100 * inches**2,
-             material = "Steel")
+start_time = time.time()
+process_graph = load_ebom(file, build_quantity=50)
+print("Load XML Elapsed Time: %f s" % (time.time() - start_time))
 
-makeA = Process(kind = "Make",
-                name = "Make A",
-                level = "activity",
-                part = partA)
+# Expand the process graph using the PML models
+start_time = time.time()
+expand_graph(process_graph)
+print("Expand Graph Elapsed Time: %f s" % (time.time() - start_time))
 
-makeB = Process(kind = "Make",
-                name = "Make B",
-                level = "activity",
-                part = partB)
-
-assemble = Process(kind = "Assemble",
-                   name = "Assemble A to B",
-                   level = "activity",
-                   predecessor = [makeA, makeA, makeB],
-                   fasteningSteps = [{ "method" : "weld",
-                                       "weldLength" : 5 * inches },
-                                     { "method" : "paint" }])
-
-deliver = Process(kind = "Deliver",
-                  name = "Deliver",
-                  level = "activity",
-                  predecessor = assemble)
-
-# Create and expand the process graph
-processGraph = ProcessGraph(makeA, makeB, assemble, deliver)
-expand_graph(processGraph)
-
-# Save graph as image
-as_png(processGraph, "graph.png")
+# # Save graph as image
+start_time = time.time()
+as_png(process_graph, "graph.png")
+print("Save PNG Elapsed Time: %f s" % (time.time() - start_time))
 
 # Validate the graph by ensuring routings exist
-if validate_graph(processGraph):
+if validate_graph(process_graph):
+    print()
     print("Graph is valid!")
-    
-    # Find the minimum cost
+      
+    start_time = time.time()
     print()
     print("-- Find cheapest configuration --")
-    (total_cost, selected_processes) = find_min(processGraph, weight="cost")
+    (total_cost, selected_processes) = find_min(process_graph, weight="cost")
     print("    Cheapest Configuration: %s" % as_dollars(total_cost))
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
+     
+    start_time = time.time()
+    print()
+    print("-- Find quickest configuration --")
+    (total_time, selected_processes) = find_min(process_graph, weight="time")
+    print("    Quickest Configuration: %s" % as_time(total_time))
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
+     
+    start_time = time.time()
+    print()
+    print("-- Find best 50/50 configuration --")
+    (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
+    print("    Best Configuration: %s" % str(cp_time))
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
     
-    # Save the minimum routings to a graph
-    minimumGraph = create_subgraph(selected_processes)
+    start_time = time.time()
+    print()
+    print("-- Saving configuration to PNG --")
+    minimumGraph = create_subgraph(process_graph, selected_processes)
     as_png(minimumGraph, "minimumGraph.png")
-
-    # Convert to networkx graph (with cost weights on edges)
-    network = as_networkx(processGraph, weight="cost")
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
     
-    # Find cheapest cost routings
     print()
-    print("-- Find cheapest routings demo --")
-    for source in processGraph.get_sources():
-        path = nx.shortest_path(network, source, assemble, weight="cost")
-        
-        print("    Cheapest route for %s:" % source.name)
-        print("        Routing: %s" % path)
-        print("        Cost: %s" % as_dollars(sum([p.cost if hasattr(p, "cost") else 0 for p in path])))
-        print("        Time: %s" % as_time(sum([p.time if hasattr(p, "time") else 0 for p in path])))
-        
-    # Find all routings for making Part A
-    print()
-    print("-- Find all possible routings demo -- ")
-    paths = nx.all_simple_paths(network, makeA, assemble)
-    
-    for path in paths:
-        print("    Possible path for %s:" % makeA.name)
-        print("        Routing: %s" % path)
-        print("        Cost: %s" % as_dollars(sum([p.cost if hasattr(p, "cost") else 0 for p in path])))
-        print("        Time: %s" % as_time(sum([p.time if hasattr(p, "time") else 0 for p in path])))
-    
+    print("-- Resources required by configuration --")
+    print("   ", create_resources(selected_processes))
+      
 else:
+    print()
     print("Process graph is invalid - No routing exists")
+    
+print()
+print("Overall Elapsed Time: %f s" % (time.time() - overall_start_time))

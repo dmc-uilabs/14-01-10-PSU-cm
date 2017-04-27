@@ -124,7 +124,7 @@ def validate_graph(graph, networkx = None):
                 
     return True
 
-def find_min(graph, weight = None, networkx = None, simvar=None):
+def find_min(graph, weight = None, networkx = None):
     total = 0
     selected_processes = set()
     
@@ -132,24 +132,56 @@ def find_min(graph, weight = None, networkx = None, simvar=None):
         weight = "cost"
     
     if networkx is None:
-        networkx = as_networkx(graph, weight = weight, simvar=simvar)
+        networkx = as_networkx(graph, weight = weight)
     
     for original_process in graph.original_processes.keys():
         new_process = graph.original_processes[original_process]
         
         for original_successor in original_process.successors:
             new_successor = graph.original_processes[original_successor]
-            path = nx.shortest_path(networkx, new_process, new_successor, weight = weight)
+            path = nx.shortest_path(networkx, new_process, new_successor, weight = "weight")
             
             selected_processes.update(path)
-            total += sum([getattr(p, weight) if hasattr(p, weight) else 0 for p in path])
+            
+            for p in path:
+                total += calc_weight(p, weight)
                 
     return (total, selected_processes)
 
+def sum_weight(graph, weight = None, networkx = None):
+    total = 0
+    
+    if weight is None:
+        weight = "cost"
+        
+    if networkx is None:
+        networkx = as_networkx(graph, weight = weight)
 
+    for original_process in graph.original_processes.keys():
+        new_process = graph.original_processes[original_process]
+        
+        for original_successor in original_process.successors:
+            new_successor = graph.original_processes[original_successor]
+            paths = nx.all_simple_paths(networkx, new_process, new_successor)
+            
+            # only select paths that do not include any intermediate original_processes
+            valid_paths = []
+            
+            for path in paths:
+                if not any([p in graph.original_processes.values() for p in path[1:-1]]):
+                    valid_paths.append(path)
 
-
-
+            # throw an error if there is anything but a single unique path
+            if len(valid_paths) == 0:
+                raise NoPathException("no path exists between nodes")
+            elif len(valid_paths) > 1:
+                raise MultiplePathException("multiple paths exist between nodes, reduce graph first")
+            
+            # sum up the weights
+            for p in valid_paths[0]:
+                total += calc_weight(p, weight)
+                
+    return total
     
 def enumerate_successors(process, processed = set()):
     result = set()
@@ -163,8 +195,11 @@ def enumerate_successors(process, processed = set()):
         
     return result
 
-def create_subgraph(processes):
-    processes = set(copy.deepcopy(processes))
+def create_subgraph(graph, processes):
+    # we want the original_processes of the subgraph to match those of the original graph; we use the Python
+    # deepcopy memo to map from the original process to the copied process.
+    memo = {}
+    processes = set(copy.deepcopy(processes, memo))
     
     for process in processes:
         for successor in list(process.successors):
@@ -174,7 +209,9 @@ def create_subgraph(processes):
             if predecessor not in processes:
                 process.remove_predecessor(predecessor)
                 
-    return ProcessGraph(*processes)
+    subgraph = ProcessGraph(*processes)
+    subgraph.original_processes = {p : memo[id(graph.original_processes[p])] for p in graph.original_processes.keys()}
+    return subgraph
 
 def create_resources(processes, attr="resource"):
     '''Scans all of the processes for the given attribute, which can either be a

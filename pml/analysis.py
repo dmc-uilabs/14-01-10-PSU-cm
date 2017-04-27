@@ -81,10 +81,10 @@ def getconfigparams(processGraph):
     #a=as_networkx_sensitive(processGraph, weight="time")
     timeperf=getnodeperformance(as_networkx_sensitive(processGraph, weight="time"))
     costperf=getnodeperformance(as_networkx_sensitive(processGraph, weight="cost"))
-    (total_cost, selected_processes) = find_min(processGraph, weight="cost",simvar=1000)
-    (total_time, selected_processes2) = find_min(processGraph, weight="time",simvar=1000)
-    (nom_cost, a) = find_min(processGraph, weight="cost",simvar=1)
-    (nom_time, b) = find_min(processGraph, weight="time",simvar=1)
+    (total_cost, selected_processes) = find_min_simvar(processGraph, weight="cost",simvar=1000)
+    (total_time, selected_processes2) = find_min_simvar(processGraph, weight="time",simvar=1000)
+    (nom_cost, a) = find_min_simvar(processGraph, weight="cost",simvar=1)
+    (nom_time, b) = find_min_simvar(processGraph, weight="time",simvar=1)
     Thisconfig.boxandwhiskercost=as_dollars(total_cost)
     Thisconfig.boxandwhiskertime=as_time(total_time)
     Thisconfig.processcostrobustness=costperf
@@ -105,7 +105,7 @@ def find_min_monte(graph, weight = None, networkx = None, reps=None):
             weight = "cost"
         if networkx is None:
             for curvar in list(range(1,1100,100)):
-                networkx = as_networkx(graph, weight = weight, simvar=curvar)
+                networkx = as_networkx_simvar(graph, weight = weight, simvar=curvar)
                 for n in networkx.nodes():
                     weights=getattr(n,weight) if hasattr(n,weight) else 0
                     contributions_dict[n].append(weights)
@@ -147,12 +147,16 @@ def preprocv2(thing, sd, wtype):
          stringthing.replace('-','')
         
      if wtype=="cost":
-        #print(stringthing)
         if len(stringthing)>1:
             if stringthing[1]=="/":
                 stringthing='1'+ stringthing
 
-        floatval= numpy.abs(safe_log(numpy.random.lognormal(eval(str(re.sub('[!@#$*]', '',stringthing))), sd, 1)))
+        trimstr = str(re.sub('[!@#$*]', '',stringthing))
+        
+        if len(trimstr) == 0:
+            trimstr = "1"
+        
+        floatval= numpy.abs(safe_log(numpy.random.lognormal(eval(trimstr), sd, 1)))
         #print(floatval)
         return floatval        
         
@@ -160,7 +164,13 @@ def preprocv2(thing, sd, wtype):
         if len(stringthing)>1:
             if stringthing[1]=="/":
                 stringthing='1'+ stringthing
-        floatval=numpy.abs(safe_log(numpy.random.lognormal(eval(str(re.sub('[s* ]', '', stringthing))), sd, 1)))
+                
+        trimstr = str(re.sub('[s* ]', '', stringthing))
+        
+        if len(trimstr) == 0:
+            trimstr = "1"
+                
+        floatval=numpy.abs(safe_log(numpy.random.lognormal(eval(trimstr), sd, 1)))
         #print(floatval)
         return floatval       
  
@@ -215,7 +225,7 @@ def as_networkx_sensitive(graph, weight="cost", simvarrange=[1,10000,25]):
     return thedict
 
 def generatetopography(processGraph):
-    simgraph=as_networkx(processGraph)
+    simgraph=as_networkx_simvar(processGraph)
     bigM=1000000
     milemarkers=list(filter(lambda thenode: thenode.level=="activity",simgraph.nodes()))
     topography={}
@@ -249,7 +259,7 @@ def cleangraph(graph):
         
 def graphsimulation(processGraph, simparam="cost", sdmultiplier=1):
     import re
-    simgraph=as_networkx(processGraph) 
+    simgraph=as_networkx_simvar(processGraph) 
     simgraph=cleangraph(simgraph) #get the graph
     for node in simgraph.nodes():
        #print(node.cost) if hasattr(node,"cost") else 0
@@ -259,7 +269,7 @@ def graphsimulation(processGraph, simparam="cost", sdmultiplier=1):
            node.cost=0      
     return simgraph
 
-def find_min(graph, weight = None, networkx = None, simvar=None):
+def find_min_simvar(graph, weight = None, networkx = None, simvar=None):
     total = 0
     selected_processes = set()
     
@@ -267,7 +277,7 @@ def find_min(graph, weight = None, networkx = None, simvar=None):
         weight = "cost"
     
     if networkx is None:
-        networkx = as_networkx(graph, weight = weight, simvar=simvar)
+        networkx = as_networkx_simvar(graph, weight = weight, simvar=simvar)
     
     for original_process in graph.original_processes.keys():
         new_process = graph.original_processes[original_process]
@@ -281,9 +291,7 @@ def find_min(graph, weight = None, networkx = None, simvar=None):
                 
     return (total, selected_processes)
 
-
-
-def as_networkx(graph, weight="cost",simvar=1):
+def as_networkx_simvar(graph, weight="cost",simvar=1):
     processes = graph.processes
     graph = nx.DiGraph()
     
@@ -302,7 +310,6 @@ def as_networkx(graph, weight="cost",simvar=1):
         pick = unprocessed.pop()
         counter += 1
         
-        #print("Adding node " + pick.name + " with id " + str(counter))
         id_map[pick] = str(counter)
         graph.add_node(pick)
         processed.add(pick)
@@ -313,20 +320,8 @@ def as_networkx(graph, weight="cost",simvar=1):
                 
     for node in processed:
         for successor in node.successors:
-            if weight=="linearcomb":
-                wv1=getattr(node,"cost") if hasattr(node,"cost") else 0; wv2=getattr(node,"time") if hasattr(node,"time") else 0
-                weight_value=.5*(preprocv2(wv1,simvar,"cost"))+.5*(preprocv2(wv2,simvar,"time"))
-            if weight=="cost":
-                 tw = getattr(node, "cost") if hasattr(node, "cost") else 0
-            #print("Adding edge between " + node.name + " and " + successor.name + " with weight " + str(weight_value))
-                 weight_value=preprocv2(tw, simvar, weight)
-            if weight=="time":
-                 tw = getattr(node, "time") if hasattr(node, "time") else 0
-            #print("Adding edge between " + node.name + " and " + successor.name + " with weight " + str(weight_value))
-                 weight_value=preprocv2(tw, simvar, weight)     
-            #print(weight_value)
+            weight_value = getattr(node, weight) if hasattr(node, weight) else 0
             graph.add_edge(node, successor, **{weight : weight_value})
-           
             
     return graph 
 

@@ -1,0 +1,57 @@
+[
+	{
+		"name" : "Machining :: Labor Rate",
+		"value" : 90,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Casting :: Labor Rate",
+		"value" : 60,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "General Labor :: Labor Rate",
+		"value" : 50,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Welding :: Labor Rate",
+		"value" : 80,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Plating :: Labor Rate",
+		"value" : 60,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Painting :: Labor Rate",
+		"value" : 60,
+		"unit" : "dollars / hour"
+	},
+	{
+		"name" : "Material :: Steel :: Cost",
+		"value" : 0.9,
+		"unit" : "dollars / inch**3"
+	},
+	{
+		"name" : "Material :: Aluminum :: Cost",
+		"value" : 1.2,
+		"unit" : "dollars / inch**3"
+	},
+	{
+		"name" : "Material :: Paint :: Cost",
+		"value" : 0.5,
+		"unit" : "dollars / inch**2"
+	},
+	{
+		"name" : "Material :: Powder :: Cost",
+		"value" : 0.8,
+		"unit" : "dollars / inch**2"
+	},
+	{
+		"name" : "Material :: Weld Filler :: Cost",
+		"value" : 0.8,
+		"unit" : "dollars / inch"
+	}
+]
