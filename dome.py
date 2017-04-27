@@ -35,7 +35,7 @@ def write_outputs(file, fields):
             f.write(str(name) + " = " + str(value))
             f.write("\n")
 
-def fail(message):
+def exit_with_message(message):
     write_outputs("output.txt", { "message" : message})
     exit(-1)
 
@@ -53,7 +53,7 @@ def read_inputs(file):
 def validate_inputs(inputs, fields):
     for name, (required, type) in fields.items():
         if required and name not in inputs:
-            fail("missing required input " + str(name))
+            exit_with_message("missing required input " + str(name))
             
         if name in inputs:
             inputs[name] = type(inputs[name])
@@ -95,7 +95,7 @@ def process(input_file, user_constants=None, weight="cost"):
                                       "cost" : float(total_cost / dollars),
                                       "time" : float(total_time / days) })       
     else:
-        fail("Unable to manufacture design, no routings exist")
+        exit_with_message("Unable to manufacture design, no routings exist")
   
 if __name__ == "__main__":
     try:
@@ -125,4 +125,4 @@ if __name__ == "__main__":
             os.unlink(file)
     except Exception as e:
         traceback.print_exc()
-        fail("An error occurred: " + str(e))  
+        exit_with_message("An error occurred: " + str(e))  
