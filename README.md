@@ -23,8 +23,8 @@ build quantities.
 The `library` folder contains the default PML models.  PML models are Python
 scripts that follow standard conventions for modifying the process graph.  The
 process graph is a collection of processes and their dependencies.  A process
-can contain arbitrary information, but at the minimum must have a defined 
-`kind`.  Typically, we will include a name, level, and part information.
+can contain arbitrary information, but at the minimum must have a `kind`
+attribute.  Typically, we will include a name, level, and part information.
 
 ```python
 
@@ -45,9 +45,11 @@ PML models:
     register_file("Make :: Fabricate :: Investment Casting", "Investment Casting.pml")
 ```
 
-Now, when we encounter the process from above, we execute the PML model
-contained in `Investment Casting.pml`.  A PML model can perform a variety
-of tasks.  Typically, this will involve performing any validation checks:
+Now, when we encounter the process with the
+`Make :: Fabricate :: Investment Casting` kind, we execute the PML
+model contained in `Investment Casting.pml`.  A PML model can perform a
+variety of tasks.  Typically, this will involve performing any validation
+checks:
 
 ```python
 
@@ -114,7 +116,7 @@ Next, we expand the process graph using the PML models:
 ```
 
 At this point, the process graph is generated and we can perform our analysis.
-First, it is recommended to validate the graph.  This ensures that paths exists
+First, it is recommended to validate the graph.  This ensures that paths exist
 between all nodes in the graph.
 
 ```python
@@ -127,14 +129,14 @@ If you're curious what the graph looks like, we can save it to an image.  This
 requires GraphVis to be installed on your computer.
 
 ```python
-    
+
     as_png(processGraph, "graph.png")
 ```
 
 We can search the graph to find the minimum cost routings.
 
 ```python
-    
+
     (cost, selected_processes) = find_min(processGraph, weight="cost")
 ```
 
@@ -143,7 +145,7 @@ selected.  We can construct a new process graph with just these selected
 processes and save it as an image:
 
 ```python
-    
+
     minimumGraph = create_subgraph(processGraph, selected_processes)
     as_png(minimumGraph, "minimumGraph.png")
 ```
