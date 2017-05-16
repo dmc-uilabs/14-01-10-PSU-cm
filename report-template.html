@@ -3,7 +3,8 @@
 <title>Manufacturing Report for TDP 10861</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
+<link rel="stylesheet" href="report.css">
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
@@ -11,10 +12,15 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
 </style>
 <body class="w3-light-grey">
 
+<!-- page 1 -->
+<div id="colorstrip" style="height:200px">
+			<br/>
+			<center><h1 style="color: white"><b>Manufacturability Report for Rolls-Royce TDP 10861</b></h1></center>
+			<center><font style="color:white">Prepared at ::time:: on ::date::</font></center>
+</div>
 <!-- Page Container -->
 <div class="w3-content w3-margin-top" style="max-width:1400px;">
 	<p class="w3-large"><b><i class="fa fa-fw w3-margin-right w3-text-teal"></i><h1>
-			<center><h2 class="w3-text-grey w3-padding-16" style="color:black"><b>Manufacturability Report for Rolls-Royce TDP 10861</b></h2></center>
         <div class="w3-display-container" style="margin-left: 150px;">
 	  <table width=90%>
 		  <tr>
@@ -38,9 +44,14 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
         </div>
 </div>
 
-  <!-- The Grid -->
-  <div class="w3-row-padding">
+
+  <!-- page break -->
+  <div class="w3-row-padding" style="page-break-before: always">
   
+  <!-- page 2 -->
+  <!-- cost & lead time outputs -->
+  <div id="colorstrip" style="height:20px">
+
     <!-- Left Column -->
     <div class="w3-third">
 	<br/><br/><br/>
@@ -48,100 +59,205 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
           <hr>
       </div><br>
 
+      <div id="colorstrip"></div>
+	<h1 style="color: #009688"><b>Cost & Lead-Time Configurations Tradespace</b></h1>
+
       <div class="w3-container w3-card-2 w3-white">
         <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Cost & Lead Time Assessment</h2>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Cheapest:</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Forever</h6>
-          <p>Web Development! All I need to know in one place</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Fastest:</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2013 - 2015</h6>
-          <p>Master Degree</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Best Cost/Delivery Balance:</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2010 - 2013</h6>
-          <p>Bachelor Degree</p><br>
-        </div>
+
+        <div class="w3-container" style="float:left;">
+          <h5 class="w3-opacity"><b>Cheapest Configuration:</b></h5>
+
+<table cellspacing='0'> <!-- cellspacing='0' is important, must stay -->
+
+	<!-- Table Header -->
+	<thead>
+		<tr>
+			<th colspan="3">$753.27 and 8 weeks lead time</th>
+		</tr>
+		<tr>
+			<th>Category</th>
+			<th>Cost</th>
+			<th>Uncertainty</th>
+		</tr>
+	</thead>
+	<!-- Table Header -->
+
+	<!-- Table Body -->
+	<tbody>
+
+		<tr>
+			<td>Labor</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr><!-- Table Row -->
+
+		<tr class="even">
+			<td>Materials</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr><!-- Darker Table Row -->
+
+		<tr>
+			<td>Overhead</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr>
+
+		<tr class="even">
+			<td>Fee</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr>
+
+		<tr>
+			<td>Total</td>
+			<td></td>
+			<td>Unavailable</td>
+		</tr>
+
+	</tbody>
+	<!-- Table Body -->
+
+</table>
+
+	</div>
+
+        <div class="w3-container" style="float:left;">
+          <h5 class="w3-opacity"><b>Fastest Configuration:</b></h5>
+
+<table cellspacing='0' style="width:20%"> <!-- cellspacing='0' is important, must stay -->
+
+	<!-- Table Header -->
+	<thead>
+		<tr>
+			<th colspan="3">$955.37 and 6 weeks lead time</th>
+		</tr>
+		<tr>
+			<th>Category</th>
+			<th>Cost</th>
+			<th>Uncertainty</th>
+		</tr>
+	</thead>
+	<!-- Table Header -->
+
+	<!-- Table Body -->
+	<tbody>
+
+		<tr>
+			<td>Labor</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr><!-- Table Row -->
+
+		<tr class="even">
+			<td>Materials</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr><!-- Darker Table Row -->
+
+		<tr>
+			<td>Overhead</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr>
+
+		<tr class="even">
+			<td>Fee</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr>
+
+		<tr>
+			<td>Total</td>
+			<td></td>
+			<td>Unavailable</td>
+		</tr>
+
+	</tbody>
+	<!-- Table Body -->
+
+</table>
+
+	</div>
+
+        <div class="w3-container" style="float:left; width:25%">
+          <h5 class="w3-opacity"><b>Balanced Configuration:</b></h5>
+
+<table cellspacing='0'> <!-- cellspacing='0' is important, must stay -->
+
+	<!-- Table Header -->
+	<thead>
+		<tr>
+			<th colspan="3">$876.53 and 6.8 weeks lead time</th>
+		</tr>
+		<tr>
+			<th>Category</th>
+			<th>Cost</th>
+			<th>Uncertainty</th>
+		</tr>
+	</thead>
+	<!-- Table Header -->
+
+	<!-- Table Body -->
+	<tbody>
+
+		<tr>
+			<td>Labor</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr><!-- Table Row -->
+
+		<tr class="even">
+			<td>Materials</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr><!-- Darker Table Row -->
+
+		<tr>
+			<td>Overhead</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr>
+
+		<tr class="even">
+			<td>Fee</td>
+			<td>Unavailable</td>
+			<td>Unavailable</td>
+		</tr>
+
+		<tr>
+			<td>Total</td>
+			<td></td>
+			<td>Unavailable</td>
+		</tr>
+
+	</tbody>
+	<!-- Table Body -->
+
+</table>
+
+
       </div>
+
+
 
     <!-- End Left Column -->
     </div>
 
-    <!-- Right Column -->
-    <div class="w3-twothird">
-    
-      <div class="w3-container w3-card-2 w3-white w3-margin-bottom">
-        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-suitcase fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Work Experience</h2>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Front End Developer / w3schools.com</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Jan 2015 - <span class="w3-tag w3-teal w3-round">Current</span></h6>
-          <p>orem ipsum dolor sit amet. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic. Nulla tempora soluta ea et odio, unde doloremque repellendus iure, iste.</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Web Developer / something.com</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Mar 2012 - Dec 2014</h6>
-          <p>Consectetur adipisicing elit. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic. Nulla tempora soluta ea et odio, unde doloremque repellendus iure, iste.</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Graphic Designer / designsomething.com</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Jun 2010 - Mar 2012</h6>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p><br>
-        </div>
-      </div>
 
-      <div class="w3-container w3-card-2 w3-white">
-        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Education</h2>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>W3Schools.com</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Forever</h6>
-          <p>Web Development! All I need to know in one place</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>London Business School</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2013 - 2015</h6>
-          <p>Master Degree</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>School of Coding</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2010 - 2013</h6>
-          <p>Bachelor Degree</p><br>
-        </div>
-      </div>
+  <!-- page 3 -->
+  <!-- page break -->
+  <div id="colorstrip" style="height:20px">
+  <h1 style="color: #009688"><b>Process Map</b></h1>
 
-    <!-- End Right Column -->
-    </div>
-    
-  <!-- End Grid -->
-  </div>
-  
-  <!-- End Page Container -->
 </div>
 
 <footer class="w3-container w3-teal w3-center w3-margin-top">
-  <p>Find me on social media.</p>
-  <i class="fa fa-facebook-official w3-hover-opacity"></i>
-  <i class="fa fa-instagram w3-hover-opacity"></i>
-  <i class="fa fa-snapchat w3-hover-opacity"></i>
-  <i class="fa fa-pinterest-p w3-hover-opacity"></i>
-  <i class="fa fa-twitter w3-hover-opacity"></i>
-  <i class="fa fa-linkedin w3-hover-opacity"></i>
-  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
 </footer>
 
         <div class="w3-display-container">
           <img src="graph.png" style="width:100%" alt="Avatar">
-          <div class="w3-display-bottomleft w3-container w3-text-black">
-            <h2>Jane Doe</h2>
-          </div>
         </div>
 
 </body>
