@@ -9,30 +9,7 @@ from matplotlib import pyplot as plt
 
 
 
-def gen_tradespace2(process_graph):
-
-#    test = (lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-#    print (str(test))
-#    print (str(test(34)))
-#    print (str(test))
-#    quit()
-
-    for x in range (0, 11):
-        var_x = (x/10)
-        var_y = (1.0-var_x)
-        (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : var_x*n.cost/dollars + var_y*n.time/days)
-        #X[x] = 
-        print ("x=" + str(var_x) + ", y=" + str(var_y) + ", cp_time=" + str(cp_time))
-        print ("\n")
-
-    X = [590,540,740,130,810,300,320,230,470,620,770,250]
-    Y = [32,36,39,52,61,72,77,75,68,57,48,48]
-
-    plt.scatter(X,Y)
-
-    plt.savefig('tradespace.png')
-
-def gen_tradespace(process_graph):
+def gen_tradespace(alternatives):
 
     for x in range (0, 10):
         for y in range (0, 10):
@@ -98,6 +75,11 @@ if validate_graph(process_graph):
     print("-- Resources required by configuration --")
     print("   ", create_resources(selected_processes))
 
+    print("-- Generating All Alternatives --")
+    all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
+    pareto_alternatives = pareto(all_alternatives)
+    gen_tradespace(pareto_alternatives)
+    print("    Alternatives:", pareto_alternatives)
     gen_tradespace2(process_graph)
       
 else:
