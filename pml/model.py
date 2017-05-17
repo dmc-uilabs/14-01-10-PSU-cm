@@ -1,5 +1,6 @@
 import copy
 import logging
+import itertools
 import networkx as nx
 from .library import *
 from .units import *
@@ -147,6 +148,77 @@ def find_min(graph, weight = None, networkx = None):
                 total += calc_weight(p, weight)
                 
     return (total, selected_processes)
+
+def generate_alternatives(graph, weights = None, networkx = None):
+    if weights is None:
+        weights = ["cost", "time"]
+        
+    if not isinstance(weights, (list, tuple)):
+        weights = [weights]
+    
+    if networkx is None:
+        networkx = as_networkx(graph)
+        
+    all_paths = []
+    
+    for original_process in graph.original_processes.keys():
+        new_process = graph.original_processes[original_process]
+        
+        for original_successor in set(original_process.successors):
+            new_successor = graph.original_processes[original_successor]
+            all_paths.append(nx.all_simple_paths(networkx, new_process, new_successor))
+              
+    for product in itertools.product(*all_paths):
+        selected_processes = set()
+        
+        for p in product:
+            selected_processes.update(p)
+            
+        minimumGraph = create_subgraph(graph, selected_processes)
+        
+        yield [sum_weight(minimumGraph, weight=w) for w in weights]
+        
+def dominance_check(a, b):
+    if len(a) != len(b):
+        raise ValueError("lengths not the same")
+    
+    dominate1 = False
+    dominate2 = False
+    equal = True
+        
+    for i in range(len(a)):
+        if a[i] < b[i]:
+            dominate1 = True
+            equal = False
+        elif a[i] > b[i]:
+            dominate2 = True
+            equal = False
+
+    if equal:
+        return -1
+
+    if dominate1 == dominate2:
+        return 0
+    elif dominate1:
+        return -1
+    else:
+        return 1
+        
+def pareto(entries):
+    result = []
+    
+    for e in list(entries):
+        flags = [dominance_check(e, s) for s in result]
+        dominates = [x > 0 for x in flags]
+        nondominated = [x == 0 for x in flags]
+        
+        if any(dominates):
+            continue
+        else:
+            result = list(itertools.compress(result, nondominated)) + [e]
+
+    return result
+        
 
 def sum_weight(graph, weight = None, networkx = None):
     total = 0

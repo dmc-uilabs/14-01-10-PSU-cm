@@ -69,6 +69,14 @@ if validate_graph(process_graph):
     print()
     print("-- Resources required by configuration --")
     print("   ", create_resources(selected_processes))
+    
+    start_time = time.time()
+    print()
+    print("-- Generating All Alternatives --")
+    all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
+    pareto_alternatives = pareto(all_alternatives)
+    print("    Alternatives:", pareto_alternatives)
+    print("    Elapsed Time: %f s" % (time.time() - start_time))
       
 else:
     print()
