@@ -183,9 +183,6 @@ def generate_alternatives(graph, weights = None, networkx = None):
         yield result
         
 def dominance_check(a, b, weights):
-    if len(a) != len(b):
-        raise ValueError("lengths not the same")
-    
     dominate1 = False
     dominate2 = False
     equal = True
