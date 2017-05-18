@@ -7,8 +7,13 @@ from pylab import figure, axes, pie, title, show
 import matplotlib
 from matplotlib import pyplot as plt
 import pdfkit
+import datetime
 
-AUTH_TOKEN=False
+AUTH_TOKEN = False
+CLIENT = "Rolls-Royce"
+TDP_NO = "108651"
+PREPTS = datetime.datetime.now()
+
 
 def print_alternatives(alternatives):
     for i, pa in enumerate(alternatives):
@@ -84,8 +89,7 @@ def gen_tradespace(alternatives, f='tradespace.png', annotate=True):
 
 
 def validate_auth(auth_token):
-    return False
-    #return True)
+    return True
 
 
 def err_out(message):
@@ -130,6 +134,17 @@ as_png(process_graph, "full-graph.png")
 
 # Validate the graph by ensuring routings exist
 if validate_graph(process_graph):
+
+    file = open('report-templates/report-template-pt1.html', 'r')
+    final_html = file.read()
+    final_html = final_html + '<center><h1 style="color: white"><b>Manufacturability Report for ' + CLIENT + " TDP NO. " + TDP_NO + "</b></h1></center>" + '<center><font style="color:white">Prepared at ' + str(PREPTS) + '</font></center>'
+    file.close()
+
+    file = open('report-templates/report-template-pt2.html', 'r')
+    final_html = final_html + file.read()
+    file.close()
+    
+
     #print()
       
     #print("-- Find cheapest configuration --")
@@ -178,7 +193,12 @@ if validate_graph(process_graph):
     #for feedback in MFG_FEEDBACK:
         #print (str(feedback))
 
-    pdfkit.from_file('report-template.html', 'report.pdf')
+    file = open('report-templates/report-template.html', 'w')
+    file.write(final_html)
+    file.flush()
+    file.close()
+
+    pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
       
 else:
     err_out("Not manufacturable with this production center - no report generated")
