@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 import pdfkit
 
 
-def gen_tradespace(alternatives):
+def gen_tradespace(alternatives, f='tradespace.png'):
     #print("    Alternatives:", pareto_alternatives)
 
     X = []
@@ -61,7 +61,7 @@ def gen_tradespace(alternatives):
 
 
 
-    plt.savefig('tradespace.png')
+    plt.savefig(f)
 
 
 # Scan the library/ folder and its subfolders for __init__.pml files, which are
@@ -112,8 +112,9 @@ if validate_graph(process_graph):
 
     print("-- Generating All Alternatives --")
     all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
+    gen_tradespace(all_alternatives)
     pareto_alternatives = pareto(all_alternatives)
-    gen_tradespace(pareto_alternatives)
+    gen_tradespace(pareto_alternatives, 'pareto-alternatives.png')
 
     pdfkit.from_file('report-template.html', 'report.pdf')
       
