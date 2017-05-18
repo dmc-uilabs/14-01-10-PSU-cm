@@ -8,6 +8,7 @@ import matplotlib
 from matplotlib import pyplot as plt
 import pdfkit
 
+AUTH_TOKEN=False
 
 def print_alternatives(alternatives):
     for i, pa in enumerate(alternatives):
@@ -80,6 +81,36 @@ def gen_tradespace(alternatives, f='tradespace.png', annotate=True):
     plt.savefig(f)
 
 
+
+
+def validate_auth(auth_token):
+    return False
+    #return True)
+
+
+def err_out(message):
+    #read error-template-pt1.html
+    file = open('report-templates/error-template-pt1.html', 'r')
+    final_html = file.read()
+    final_html = final_html + "<h1>" + message + "~</h1>\n"
+    file.close
+    file = open('report-templates/error-template-pt2.html', 'r')
+    final_html = final_html + file.read()
+    file.close
+
+    file = open('report-templates/error-template.html', 'w')
+    file.write(final_html)
+    file.flush()
+    file.close
+    
+    pdfkit.from_file('report-templates/error-template.html', 'report.pdf')
+    #pdfkit.from_file('report-templates/error-template.working.html', 'report.pdf')
+    quit()
+
+if (False==validate_auth(AUTH_TOKEN)):
+    err_out("Invalid Authorization - no report generated")
+
+
 # Scan the library/ folder and its subfolders for __init__.pml files, which are
 # executed to initialize the PML "database"
 auto_register("library")
@@ -101,25 +132,25 @@ as_png(process_graph, "full-graph.png")
 if validate_graph(process_graph):
     #print()
       
-    print("-- Find cheapest configuration --")
+    #print("-- Find cheapest configuration --")
     (total_cost, selected_processes) = find_min(process_graph, weight="cost")
-    print("    Cheapest Configuration: %s" % as_dollars(total_cost))
+    #print("    Cheapest Configuration: %s" % as_dollars(total_cost))
     minimumGraph = create_subgraph(process_graph, selected_processes)
     as_png(minimumGraph, "cheapestGraph.png")
      
-    print()
-    print("-- Find quickest configuration --")
+    #print()
+    #print("-- Find quickest configuration --")
     (total_time, selected_processes) = find_min(process_graph, weight="time")
-    print("    Quickest Configuration: %s" % as_time(total_time))
+    #print("    Quickest Configuration: %s" % as_time(total_time))
     minimumGraph = create_subgraph(process_graph, selected_processes)
     as_png(minimumGraph, "fastestGraph.png")
      
-    print()
-    print("-- Find best 50/50 configuration --")
+    #print()
+    #print("-- Find best 50/50 configuration --")
     (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-    print("    Best Configuration: %s" % as_time(str(cp_time)))
+    #print("    Best Configuration: %s" % as_time(str(cp_time)))
     (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-    print("    Best Configuration: %s" % as_dollars(str(cp_cost)))
+    #print("    Best Configuration: %s" % as_dollars(str(cp_cost)))
     minimumGraph = create_subgraph(process_graph, selected_processes)
     as_png(minimumGraph, "balancedGraph.png")
     
@@ -128,9 +159,9 @@ if validate_graph(process_graph):
     #minimumGraph = create_subgraph(process_graph, selected_processes)
     #as_png(minimumGraph, "minimumGraph.png")
     
-    print()
-    print("-- Resources required by configuration --")
-    print("   ", create_resources(selected_processes))
+    #print()
+    #print("-- Resources required by configuration --")
+    #print("   ", create_resources(selected_processes))
 
     #print ("\n\n\n---ALLLL----\n\n\n")
     all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
@@ -144,12 +175,13 @@ if validate_graph(process_graph):
     gen_tradespace(pareto_alternatives, 'pareto-alternatives.png')
 
     #manufacturability feedback
-    for feedback in MFG_FEEDBACK:
-        print (str(feedback))
+    #for feedback in MFG_FEEDBACK:
+        #print (str(feedback))
 
     pdfkit.from_file('report-template.html', 'report.pdf')
       
 else:
-    print()
-    print("Process graph is invalid - No routing exists")
+    err_out("Not manufacturable with this production center - no report generated")
+    #print()
+    #print("Process graph is invalid - No routing exists")
     
