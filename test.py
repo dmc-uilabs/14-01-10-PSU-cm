@@ -74,8 +74,16 @@ if validate_graph(process_graph):
     print()
     print("-- Generating All Alternatives --")
     all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
-    pareto_alternatives = pareto(all_alternatives)
-    print("    Alternatives:", pareto_alternatives)
+    pareto_alternatives = pareto(all_alternatives, weights=("cost", "time"))
+    
+    for i, pa in enumerate(pareto_alternatives):
+        print("    Alternative %d:" % i)
+        print("        Cost:", as_dollars(pa["cost"]))
+        print("        Time:", as_time(pa["time"]))
+        print("        Processes:", pa["selected_processes"])
+        print("        Graph: Saved to alternative%d.png" % i)
+        as_png(pa["process_graph"], "alternative%d.png" % i)
+    
     print("    Elapsed Time: %f s" % (time.time() - start_time))
       
 else:

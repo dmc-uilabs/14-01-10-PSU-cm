@@ -167,18 +167,22 @@ def generate_alternatives(graph, weights = None, networkx = None):
         for original_successor in set(original_process.successors):
             new_successor = graph.original_processes[original_successor]
             all_paths.append(nx.all_simple_paths(networkx, new_process, new_successor))
-              
+            
     for product in itertools.product(*all_paths):
         selected_processes = set()
         
         for p in product:
             selected_processes.update(p)
             
-        minimumGraph = create_subgraph(graph, selected_processes)
+        minimum_graph = create_subgraph(graph, selected_processes)
         
-        yield [sum_weight(minimumGraph, weight=w) for w in weights]
+        result = { w : sum_weight(minimum_graph, weight=w) for w in weights}
+        result["selected_processes"] = selected_processes
+        result["process_graph"] = minimum_graph
         
-def dominance_check(a, b):
+        yield result
+        
+def dominance_check(a, b, weights):
     if len(a) != len(b):
         raise ValueError("lengths not the same")
     
@@ -186,11 +190,11 @@ def dominance_check(a, b):
     dominate2 = False
     equal = True
         
-    for i in range(len(a)):
-        if a[i] < b[i]:
+    for w in weights:
+        if a[w] < b[w]:
             dominate1 = True
             equal = False
-        elif a[i] > b[i]:
+        elif a[w] > b[w]:
             dominate2 = True
             equal = False
 
@@ -204,11 +208,11 @@ def dominance_check(a, b):
     else:
         return 1
         
-def pareto(entries):
+def pareto(entries, weights):
     result = []
     
     for e in list(entries):
-        flags = [dominance_check(e, s) for s in result]
+        flags = [dominance_check(e, s, weights) for s in result]
         dominates = [x > 0 for x in flags]
         nondominated = [x == 0 for x in flags]
         
