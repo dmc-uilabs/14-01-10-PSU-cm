@@ -60,13 +60,13 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
       </div><br>
 
       <div id="colorstrip"></div>
-	<h1 style="color: #009688"><b>Cost & Lead-Time Configurations Tradespace</b></h1>
+	<h1 style="color: #009688"><b>Cost & Lead-Time Estimates</b></h1>
 
       <div class="w3-container w3-card-2 w3-white">
-        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Cost & Lead Time Assessment</h2>
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Optimized Options</h2>
 
         <div class="w3-container" style="float:left;">
-          <h5 class="w3-opacity"><b>Cheapest Configuration:</b></h5>
+          <h5 class="w3-opacity"><b>Cheapest:</b></h5>
 
 <table cellspacing='0'> <!-- cellspacing='0' is important, must stay -->
 
@@ -124,7 +124,7 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
 	</div>
 
         <div class="w3-container" style="float:left;">
-          <h5 class="w3-opacity"><b>Fastest Configuration:</b></h5>
+          <h5 class="w3-opacity"><b>Fastest:</b></h5>
 
 <table cellspacing='0' style="width:20%"> <!-- cellspacing='0' is important, must stay -->
 
@@ -182,7 +182,7 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
 	</div>
 
         <div class="w3-container" style="float:left; width:25%">
-          <h5 class="w3-opacity"><b>Balanced Configuration:</b></h5>
+          <h5 class="w3-opacity"><b>Balanced:</b></h5>
 
 <table cellspacing='0'> <!-- cellspacing='0' is important, must stay -->
 
@@ -240,33 +240,107 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
 
       </div>
 
-        <div class="w3-container" style="float:left;">
-          <h5 class="w3-opacity"><b>Cost vs. Lead-time Tradespace:</b></h5>
-            <div class="w3-display-container">
-              <img src="tradespace.png" style="width:60%" alt="Tradespace graph">
+      <p><br/><br/>
+      <p><br/><br/>
+      <div class="w3-container w3-card-2 w3-white">
+
+      <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Tradespace Analysis</h2>
+      <table>
+	      <tr>
+		      <td>
+            <div class="w3-display-container" style="float:left">
+              <h5 class="w3-opacity"><b>Manufacturing Alternatives:</b></h5>
+              <img src="all-alternatives.png" style="width:100%" alt="Tradespace graph">
             </div>
-	</div>
+		      </td>
+		      <td>
+            <div class="w3-display-container" style="float:left">
+              <h5 class="w3-opacity"><b>Non-Dominated (Pareto) Alternatives:</b></h5>
+              <img src="pareto-alternatives.png" style="width:100%" alt="Tradespace graph">
+            </div>
+		      </td>
+	      </tr>
+      </table>
+
+      </div>
 
     </div>
 
 
   <!-- page 3 -->
   <!-- page break -->
-  <div class="w3-row-padding" style="page-break-before: always">
+  <div class="w3-row-padding" style="page-break-before: always"/>
   <div id="colorstrip" style="height:20px">
-  <h1 style="color: #009688"><b>Process Map</b></h1>
+  <h1 style="color: #009688"><b>Full Process Map</b></h1>
+
+  <div>
+     <img src="full-graph.png" style="width:100%" alt="Process graph">
+   </div>
+  </div>
+
+  
+  <!-- page 4 -->
+  <!-- page break -->
+  <div class="w3-row-padding" style="page-break-before: always"/>
+
+  <div id="colorstrip" style="height:20px">
+    <h1 style="color: #009688"><b>Manufacturability Analysis</b></h1>
+      <div class="w3-container w3-card-2 w3-white">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Potential Issues Identified</h2>
+
+	<center>
+	<table cellspacing='0'> <!-- cellspacing='0' is important, must stay -->
+		<!-- Table Header -->
+		<thead>
+			<tr>
+				<th>Message</th>
+			</tr>
+		</thead>
+		<!-- Table Header -->
+	
+		<!-- Table Body -->
+		<tbody>
+
+			<tr>
+				<td>
+				Part is not available for purchasing
+				</td>
+			</tr><!-- Table Row -->
+	
+			<tr class="even">
+				<td>
+				Part is too thick for plate/sheet
+				</td>
+			</tr><!-- Darker Table Row -->
+	
+			<tr>
+				<td>
+				Part has no suppliers defined for bulk purchasing
+				</td>
+			</tr>
+	
+	
+		</tbody>
+		<!-- Table Body -->
+	
+	</table>
+	</center>
 
 
-   <div class="w3-display-container">
-     <img src="graph.png" style="width:100%" alt="Process graph">
+      </div>
+
+      <div class="w3-container w3-card-2 w3-white">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Reachability & Setup Analysis</h2>
+        <h5 class="w3-opacity"><b>Currently Unavailable</b></h5>
+      </div>
    </div>
 
 
-        <div class="w3-container" style="float:left;">
-          <h5 class="w3-opacity"><b>Manufacturability Analysis</b></h5>
-
-	</div>
+  </div>
 
 </div>
 </body>
 </html>
+
+
+

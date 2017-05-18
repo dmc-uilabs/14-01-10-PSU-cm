@@ -9,23 +9,38 @@ from matplotlib import pyplot as plt
 import pdfkit
 
 
-def gen_tradespace(alternatives, f='tradespace.png'):
-    #print("    Alternatives:", pareto_alternatives)
+def print_alternatives(alternatives):
+    for i, pa in enumerate(alternatives):
+        print("    Alternative %d:" % i)
+        print("        Cost:", as_dollars(pa["cost"]))
+        print("        Time:", as_time(pa["time"]))
+        print("        Processes:", pa["selected_processes"])
+        print("        Graph: Saved to alternative%d.png" % i)
+        as_png(pa["process_graph"], "alternative%d.png" % i)
 
+
+
+def gen_tradespace(alternatives, f='tradespace.png', annotate=True):
     X = []
     Y = []
     labels = []
 
-    for alt in pareto_alternatives:
-        x = alt[1].args[0]/3600
-        y = alt[0].args[0]
+    for alt in alternatives:
+        #print (str(alt))
+        x = alt['time'].args[0]/3600
+        y = alt['cost'].args[0]
+        #print (str(x))
+        #print (str(y))
         X.append(x)
         Y.append(y)
+        #print ("\n\n\n HIIII \n\n\n")
+        #print (str(X))
         labels.append("$" + str(int(y)) + "\n" + str(int(x)) + " hours \n(" + str(int(x/24)) + " days)")
 
 
-    #print (X)
-    #print (Y)
+    #print (str(X))
+    #print (str(Y))
+    #print (str(labels))
 
     plt.xlabel("Time (hours)")
     plt.ylabel("Cost (USD $)")
@@ -50,14 +65,15 @@ def gen_tradespace(alternatives, f='tradespace.png'):
 #    ax = plt.subplot()
 #    ax.set_facecolor('black')
 
-    for label, x, y in zip(labels, X, Y):
-        plt.annotate(
-            label,
-            xy=(x, y), xytext=(-15, 15),
-            textcoords='offset points', ha='right', va='bottom',
-            bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-            arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0')
-        )
+    if (True==annotate):
+        for label, x, y in zip(labels, X, Y):
+            plt.annotate(
+                label,
+                xy=(x, y), xytext=(-15, 15),
+                textcoords='offset points', ha='right', va='bottom',
+                bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+                arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0')
+            )
 
 
 
@@ -79,20 +95,24 @@ process_graph = load_ebom(file, build_quantity=50)
 expand_graph(process_graph)
 
 # # Save graph as image
-as_png(process_graph, "graph.png")
+as_png(process_graph, "full-graph.png")
 
 # Validate the graph by ensuring routings exist
 if validate_graph(process_graph):
-    print()
+    #print()
       
     print("-- Find cheapest configuration --")
     (total_cost, selected_processes) = find_min(process_graph, weight="cost")
     print("    Cheapest Configuration: %s" % as_dollars(total_cost))
+    minimumGraph = create_subgraph(process_graph, selected_processes)
+    as_png(minimumGraph, "cheapestGraph.png")
      
     print()
     print("-- Find quickest configuration --")
     (total_time, selected_processes) = find_min(process_graph, weight="time")
     print("    Quickest Configuration: %s" % as_time(total_time))
+    minimumGraph = create_subgraph(process_graph, selected_processes)
+    as_png(minimumGraph, "fastestGraph.png")
      
     print()
     print("-- Find best 50/50 configuration --")
@@ -100,21 +120,32 @@ if validate_graph(process_graph):
     print("    Best Configuration: %s" % as_time(str(cp_time)))
     (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
     print("    Best Configuration: %s" % as_dollars(str(cp_cost)))
-    
-    print()
-    print("-- Saving configuration to PNG --")
     minimumGraph = create_subgraph(process_graph, selected_processes)
-    as_png(minimumGraph, "minimumGraph.png")
+    as_png(minimumGraph, "balancedGraph.png")
+    
+    #print()
+    #print("-- Saving configuration to PNG --")
+    #minimumGraph = create_subgraph(process_graph, selected_processes)
+    #as_png(minimumGraph, "minimumGraph.png")
     
     print()
     print("-- Resources required by configuration --")
     print("   ", create_resources(selected_processes))
 
-    print("-- Generating All Alternatives --")
+    #print ("\n\n\n---ALLLL----\n\n\n")
     all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
-    gen_tradespace(all_alternatives)
-    pareto_alternatives = pareto(all_alternatives)
+    #print_alternatives(all_alternatives)
+    gen_tradespace(all_alternatives, 'all-alternatives', annotate=False)
+
+    #print ("\n\n\n---PAAARRREEETTTOOOOSSSS----\n\n\n")
+    all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
+    pareto_alternatives = pareto(all_alternatives, weights=("cost", "time"))
+    #print_alternatives(pareto_alternatives)
     gen_tradespace(pareto_alternatives, 'pareto-alternatives.png')
+
+    #manufacturability feedback
+    for feedback in MFG_FEEDBACK:
+        print (str(feedback))
 
     pdfkit.from_file('report-template.html', 'report.pdf')
       

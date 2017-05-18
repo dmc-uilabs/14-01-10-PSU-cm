@@ -10,6 +10,8 @@ from .analysis import *
 
 LOGGER = logging.getLogger("PML")
 
+MFG_FEEDBACK = []
+
 # WARNING: replace must follow a breadth-first pattern to ensure successor links update correctly before
 # dependent nodes potentially change
 def replace(parent, sources, sinks = None):
@@ -79,6 +81,7 @@ def expand(process):
                     eval(match, env, globals())
                 except FailedRouting as e:
                     LOGGER.warning("Routing failed, kind=%s, name=%s, message=%s", process.kind, process.name, e.args[0])
+                    MFG_FEEDBACK.append(e.args[0])
                     process.set_successors([])
                     prune_leaves(process)
     except KeyError:
