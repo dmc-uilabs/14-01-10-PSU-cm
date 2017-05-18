@@ -6,25 +6,60 @@ import networkx as nx
 from pylab import figure, axes, pie, title, show
 import matplotlib
 from matplotlib import pyplot as plt
-
+import pdfkit
 
 
 def gen_tradespace(alternatives):
+    #print("    Alternatives:", pareto_alternatives)
 
-    for x in range (0, 10):
-        for y in range (0, 10):
-            var_x = (x/10)
-            var_y = (y/10)
-            print ("x=" + str(var_x) + ", y=" + str(var_y))
-            #(cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-            (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : var_x*n.cost/dollars + var_y*n.time/days)
-            #X[x] = 
+    X = []
+    Y = []
+    labels = []
+
+    for alt in pareto_alternatives:
+        x = alt[1].args[0]/3600
+        y = alt[0].args[0]
+        X.append(x)
+        Y.append(y)
+        labels.append("$" + str(int(y)) + "\n" + str(int(x)) + " hours \n(" + str(int(x/24)) + " days)")
 
 
-    X = [590,540,740,130,810,300,320,230,470,620,770,250]
-    Y = [32,36,39,52,61,72,77,75,68,57,48,48]
+    #print (X)
+    #print (Y)
 
-    plt.scatter(X,Y)
+    plt.xlabel("Time (hours)")
+    plt.ylabel("Cost (USD $)")
+
+
+    plt.scatter(X,Y, marker='o', c='lightblue', s=50, cmap=plt.get_cmap('Spectral'))
+
+#    ax = plt.subplot(111,aspect = 'equal')
+#    plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
+
+#    plot_margin = 0.55
+
+#    x0, x1, y0, y1 = plt.axis()
+#    plt.axis((x0 - plot_margin,
+#            x1 + plot_margin,
+#            y0 - plot_margin,
+#            y1 + plot_margin))
+
+# JAB reserves the right to fiddle around with the colors at a later time ;)
+#    fig = plt.figure()
+#    fig.patch.set_facecolor('black')
+#    ax = plt.subplot()
+#    ax.set_facecolor('black')
+
+    for label, x, y in zip(labels, X, Y):
+        plt.annotate(
+            label,
+            xy=(x, y), xytext=(-15, 15),
+            textcoords='offset points', ha='right', va='bottom',
+            bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+            arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0')
+        )
+
+
 
     plt.savefig('tradespace.png')
 
@@ -79,8 +114,8 @@ if validate_graph(process_graph):
     all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
     pareto_alternatives = pareto(all_alternatives)
     gen_tradespace(pareto_alternatives)
-    print("    Alternatives:", pareto_alternatives)
-    gen_tradespace2(process_graph)
+
+    pdfkit.from_file('report-template.html', 'report.pdf')
       
 else:
     print()
