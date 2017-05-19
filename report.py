@@ -12,7 +12,13 @@ import datetime
 AUTH_TOKEN = False
 CLIENT = "Rolls-Royce"
 TDP_NO = "108651"
+PART = "AE2100 FCOC Bracket"
+MATERIAL = "STEEL"
 PREPTS = datetime.datetime.now()
+COMPANY = "ManufacturingSystems, Inc."
+EXPIRATION = "30 days"
+CONTACT = "rich@MSIsys.com"
+COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/1"
 
 
 def print_alternatives(alternatives):
@@ -135,6 +141,10 @@ as_png(process_graph, "full-graph.png")
 # Validate the graph by ensuring routings exist
 if validate_graph(process_graph):
 
+
+    #############################################
+    # Header page 
+    #############################################
     file = open('report-templates/report-template-pt1.html', 'r')
     final_html = file.read()
     final_html = final_html + '<center><h1 style="color: white"><b>Manufacturability Report for ' + CLIENT + " TDP NO. " + TDP_NO + "</b></h1></center>" + '<center><font style="color:white">Prepared at ' + str(PREPTS) + '</font></center>'
@@ -143,41 +153,93 @@ if validate_graph(process_graph):
     file = open('report-templates/report-template-pt2.html', 'r')
     final_html = final_html + file.read()
     file.close()
-    
 
-    #print()
-      
-    #print("-- Find cheapest configuration --")
+    final_html = final_html + """ 
+                  <tr>
+			  <td width="30%%">
+	          		<img src="../part.png" style="width:100%%" alt="picture of part.png">
+			  </td>
+			  <td width="60%%" align="center">
+            			<h5 class="w3-opacity"><b>Client: %(CLIENT)s</b></h5>
+            			<h5 class="w3-opacity"><b>Part: %(PART)s</b></h5>
+            			<h5 class="w3-opacity"><b>Preferred material: %(MATERIAL)s</b></h5>
+	  		</td>
+		  </tr>
+		  <tr>
+			  <td colspan="2">
+				  <h5 class="w3-opacity"><b>Prepared For:</b> %(COMPANY)s</h5>
+				  <h5 class="w3-opacity"><b>Prepared at:</b> %(PREPTS)s</h5>
+				  <h5 class="w3-opacity"><b>Good for:</b> Cost analysis and quote good for %(EXPIRATION)s</h5>
+                                  <h5 class="w3-opacity"><b>Company Profile:</b> %(COMPANY_URL)s</h5>
+				  <h5 class="w3-opacity"><b>Contact %(CONTACT)s for questions</h5>
+			  </td>
+                  </tr>
+                  """ % locals()
+
+    file = open('report-templates/report-template-pt3.html', 'r')
+    final_html = final_html + file.read()
+    file.close()
+
+    #############################################
+    # cheapest config
+    #############################################
     (total_cost, selected_processes) = find_min(process_graph, weight="cost")
-    #print("    Cheapest Configuration: %s" % as_dollars(total_cost))
-    minimumGraph = create_subgraph(process_graph, selected_processes)
-    as_png(minimumGraph, "cheapestGraph.png")
-     
-    #print()
-    #print("-- Find quickest configuration --")
-    (total_time, selected_processes) = find_min(process_graph, weight="time")
-    #print("    Quickest Configuration: %s" % as_time(total_time))
-    minimumGraph = create_subgraph(process_graph, selected_processes)
-    as_png(minimumGraph, "fastestGraph.png")
-     
-    #print()
-    #print("-- Find best 50/50 configuration --")
-    (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-    #print("    Best Configuration: %s" % as_time(str(cp_time)))
-    (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-    #print("    Best Configuration: %s" % as_dollars(str(cp_cost)))
-    minimumGraph = create_subgraph(process_graph, selected_processes)
-    as_png(minimumGraph, "balancedGraph.png")
-    
-    #print()
-    #print("-- Saving configuration to PNG --")
-    #minimumGraph = create_subgraph(process_graph, selected_processes)
-    #as_png(minimumGraph, "minimumGraph.png")
-    
-    #print()
-    #print("-- Resources required by configuration --")
-    #print("   ", create_resources(selected_processes))
+    minimum_graph = create_subgraph(process_graph, selected_processes)
+    total_time = sum_weight(minimum_graph, weight="time")
 
+    final_html = final_html + """
+        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Cheapest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
+		<tr>
+			<td><b>Total</b></td>
+			<td><b>%(total_cost)s</b></td>
+			<td><b>Unavailable</b></td>
+		</tr> </tbody> <!-- Table Body --> </table> </div>
+                """ % locals()
+
+    #############################################
+    # fastest config
+    #############################################
+    (total_time, selected_processes) = find_min(process_graph, weight="time")
+    minimum_graph = create_subgraph(process_graph, selected_processes)
+    total_cost = sum_weight(minimum_graph, weight="cost")
+
+    final_html = final_html + """
+        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Fastest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
+		<tr>
+			<td><b>Total</b></td>
+			<td><b>%(total_cost)s</b></td>
+			<td><b>Unavailable</b></td>
+		</tr> </tbody> <!-- Table Body --> </table> </div>
+                """ % locals()
+
+
+    #############################################
+    # balanced config
+    #############################################
+    (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
+    (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
+    minimumGraph = create_subgraph(process_graph, selected_processes)
+    total_time = cp_time
+    total_cost = cp_cost
+
+    final_html = final_html + """
+        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
+		<tr>
+			<td><b>Total</b></td>
+			<td><b>%(total_cost)s</b></td>
+			<td><b>Unavailable</b></td>
+		</tr> </tbody> <!-- Table Body --> </table> </div>
+                """ % locals()
+
+    #############################################
+    # gen tradespace 
+    #############################################
     #print ("\n\n\n---ALLLL----\n\n\n")
     all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
     #print_alternatives(all_alternatives)
@@ -189,10 +251,33 @@ if validate_graph(process_graph):
     #print_alternatives(pareto_alternatives)
     gen_tradespace(pareto_alternatives, 'pareto-alternatives.png')
 
-    #manufacturability feedback
-    #for feedback in MFG_FEEDBACK:
-        #print (str(feedback))
+    file = open('report-templates/report-template-pt4.html', 'r')
+    final_html = final_html + file.read()
+    file.close()
 
+
+    #############################################
+    # manufacturability
+    #############################################
+    final_html = final_html + "<ul>"
+    
+    #manufacturability feedback
+    for feedback in MFG_FEEDBACK:
+        final_html = final_html + "<li>" + str(feedback) + "</li>"
+
+    final_html = final_html + "</ul>"
+
+
+    #############################################
+    # finish file
+    #############################################
+    file = open('report-templates/report-template-pt5.html', 'r')
+    final_html = final_html + file.read()
+    file.close()
+
+    #############################################
+    # write out html file and convert to pdf
+    #############################################
     file = open('report-templates/report-template.html', 'w')
     file.write(final_html)
     file.flush()
