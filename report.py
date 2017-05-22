@@ -32,6 +32,9 @@ EXPIRATION = "30 days"
 CONTACT = "rich@MSIsys.com"
 COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/1"
 
+outputs = "outputs="+str(inputs)
+outputTemplate = "\noutputTemplate=<p>NEW Inputs were:</p><p>{{outputs}}</p>"
+
 target = open("out.txt", 'w')
 target.write(outputs+outputTemplate)
 target.close
