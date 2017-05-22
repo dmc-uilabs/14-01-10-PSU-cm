@@ -38,8 +38,8 @@ inputs = {}
 
 for line in lines:
     kv = line.rstrip().split("=")
-    key = kv[0]
-    value = kv[1]
+    key = kv[0].strip()
+    value = kv[1].strip()
     inputs[key] = value
 
 
