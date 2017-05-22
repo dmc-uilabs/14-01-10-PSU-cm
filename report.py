@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
-from pml import *
-import logging
-import networkx as nx
-from pylab import figure, axes, pie, title, show
-import matplotlib
-from matplotlib import pyplot as plt
-import pdfkit
-import datetime
+# from pml import *
+# import logging
+# import networkx as nx
+# from pylab import figure, axes, pie, title, show
+# import matplotlib
+# from matplotlib import pyplot as plt
+# import pdfkit
+# import datetime
 
 with open('in.txt') as f:
     lines = f.readlines()
