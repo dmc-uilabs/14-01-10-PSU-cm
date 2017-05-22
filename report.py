@@ -20,6 +20,7 @@ for line in lines:
     value = kv[1]
     inputs[key] = value
 
+
 AUTH_TOKEN = False
 CLIENT = "Rolls-Royce"
 TDP_NO = "108651"
@@ -31,6 +32,9 @@ EXPIRATION = "30 days"
 CONTACT = "rich@MSIsys.com"
 COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/1"
 
+target = open("out.txt", 'w')
+target.write(outputs+outputTemplate)
+target.close
 
 # def print_alternatives(alternatives):
 #     for i, pa in enumerate(alternatives):
