@@ -3,6 +3,8 @@
 # # Several assets are included with DOME model as .zip files. This will extract them
 def unzip_directories():
     import os
+    print("os is...")
+    print(type(os))
     import zipfile
 
     directory = os.fsencode('./')
