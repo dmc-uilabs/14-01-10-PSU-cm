@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 # # Several assets are included with DOME model as .zip files. This will extract them
+import os
+import zipfile
 def unzip_directories():
-    import os
-    import zipfile
 
     directory = os.fsencode('./')
 
@@ -18,6 +18,8 @@ def unzip_directories():
             continue
 
 unzip_directories()
+
+os.environ["DISPLAY"] = ":0"
 
 from pml import *
 import logging
@@ -314,6 +316,7 @@ if validate_graph(process_graph):
     file.flush()
     file.close()
 
+    os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
     # pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
     reportTemplate=open('report-templates/report-template.html').readlines()
