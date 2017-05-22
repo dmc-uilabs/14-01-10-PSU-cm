@@ -20,13 +20,6 @@ for line in lines:
     value = kv[1]
     inputs[key] = value
 
-outputs = "outputs="+str(inputs)
-outputTemplate = "\noutputTemplate=<p>Inputs PYOVER were:</p><p>{{outputs}}</p>"
-
-target = open("out.txt", 'w')
-target.write(outputs+outputTemplate)
-target.close
-
 AUTH_TOKEN = False
 CLIENT = "Rolls-Royce"
 TDP_NO = "108651"
@@ -322,7 +315,7 @@ if validate_graph(process_graph):
     #pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
     outputs = "outputs="+str(inputs)
-    outputTemplate = "\noutputTemplate=<p>Inputs were:</p><p>{{outputs}}</p>"
+    outputTemplate = "\noutputTemplate=<p>NEW Inputs were:</p><p>{{outputs}}</p>"
 
     target = open("out.txt", 'w')
     target.write(outputs+outputTemplate)
