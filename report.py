@@ -1,13 +1,32 @@
 #!/usr/bin/python3
 
-# from pml import *
-# import logging
-# import networkx as nx
-# from pylab import figure, axes, pie, title, show
-# import matplotlib
-# from matplotlib import pyplot as plt
-# import pdfkit
-# import datetime
+# # Several assets are included with DOME model as .zip files. This will extract them
+def unzip_directories():
+    import os
+    import zipfile
+
+    directory = os.fsencode('./')
+
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        if filename.endswith(".zip"):
+            zip_ref = zipfile.ZipFile(filename, 'r')
+            zip_ref.extractall('./')
+            zip_ref.close()
+            continue
+        else:
+            continue
+
+unzip_directories()
+
+from pml import *
+import logging
+import networkx as nx
+from pylab import figure, axes, pie, title, show
+import matplotlib
+from matplotlib import pyplot as plt
+import pdfkit
+import datetime
 
 with open('in.txt') as f:
     lines = f.readlines()
@@ -138,24 +157,6 @@ target.close
 # if (False==validate_auth(AUTH_TOKEN)):
 #     err_out("Invalid Authorization - no report generated")
 #
-# # Several assets are included with DOME model as .zip files. This will extract them
-# def unzip_directories():
-#     import os
-#     import zipfile
-#
-#     directory = os.fsencode('./')
-#
-#     for file in os.listdir(directory):
-#         filename = os.fsdecode(file)
-#         if filename.endswith(".zip"):
-#             zip_ref = zipfile.ZipFile(filename, 'r')
-#             zip_ref.extractall('./')
-#             zip_ref.close()
-#             continue
-#         else:
-#             continue
-#
-# unzip_directories()
 #
 # # Scan the library/ folder and its subfolders for __init__.pml files, which are
 # # executed to initialize the PML "database"
