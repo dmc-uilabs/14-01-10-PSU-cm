@@ -52,13 +52,6 @@ EXPIRATION = "30 days"
 CONTACT = "rich@MSIsys.com"
 COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/1"
 
-outputs = "outputs="+str(inputs)
-outputTemplate = "\noutputTemplate=<p>NEW Inputs were:</p><p>{{outputs}}</p>"
-
-target = open("out.txt", 'w')
-target.write(outputs+outputTemplate)
-target.close
-
 def print_alternatives(alternatives):
     for i, pa in enumerate(alternatives):
         print("    Alternative %d:" % i)
@@ -321,10 +314,18 @@ if validate_graph(process_graph):
     file.flush()
     file.close()
 
-    #pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
+    pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
+
+    reportTemplate=open('report-templates/report-template.html').readlines()
+    reportTemplateString=""
+
+    for n,line in enumerate(reportTemplate):
+        reportTemplateString+=line
+
+    print(reportTemplateString)
 
     outputs = "outputs="+str(inputs)
-    outputTemplate = "\noutputTemplate=<p>NEW Inputs were:</p><p>{{outputs}}</p>"
+    outputTemplate = "\noutputTemplate=<p>POST AGG Inputs were:</p><p>{{outputs}}</p>"
 
     target = open("out.txt", 'w')
     target.write(outputs+outputTemplate)
