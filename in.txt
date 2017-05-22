@@ -1,0 +1,6 @@
+displayName=Joe
+companyId=33
+email=joe.maz@email.com
+authToken=098089fgds9078ds09y8sdf9g078gds0ohisdfhg980udfg08d
+contactInfo=joe.maz@maz.com
+expireDate=2019/8/8
