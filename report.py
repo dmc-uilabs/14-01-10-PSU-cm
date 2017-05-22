@@ -9,6 +9,17 @@ from matplotlib import pyplot as plt
 import pdfkit
 import datetime
 
+with open('in.txt') as f:
+    lines = f.readlines()
+
+inputs = {}
+
+for line in lines:
+    kv = line.rstrip().split("=")
+    key = kv[0]
+    value = kv[1]
+    inputs[key] = value
+
 AUTH_TOKEN = False
 CLIENT = "Rolls-Royce"
 TDP_NO = "108651"
@@ -112,7 +123,7 @@ def err_out(message):
     file.write(final_html)
     file.flush()
     file.close
-    
+
     pdfkit.from_file('report-templates/error-template.html', 'report.pdf')
     #pdfkit.from_file('report-templates/error-template.working.html', 'report.pdf')
     quit()
@@ -143,7 +154,7 @@ if validate_graph(process_graph):
 
 
     #############################################
-    # Header page 
+    # Header page
     #############################################
     file = open('report-templates/report-template-pt1.html', 'r')
     final_html = file.read()
@@ -154,7 +165,7 @@ if validate_graph(process_graph):
     final_html = final_html + file.read()
     file.close()
 
-    final_html = final_html + """ 
+    final_html = final_html + """
                   <tr>
 			  <td width="30%%">
 	          		<img src="../part.png" style="width:100%%" alt="picture of part.png">
@@ -190,7 +201,7 @@ if validate_graph(process_graph):
     final_html = final_html + """
         <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Cheapest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
 			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
-		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
+		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
 		<tr>
 			<td><b>Total</b></td>
 			<td><b>%(total_cost)s</b></td>
@@ -208,7 +219,7 @@ if validate_graph(process_graph):
     final_html = final_html + """
         <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Fastest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
 			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
-		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
+		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
 		<tr>
 			<td><b>Total</b></td>
 			<td><b>%(total_cost)s</b></td>
@@ -229,7 +240,7 @@ if validate_graph(process_graph):
     final_html = final_html + """
         <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
 			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
-		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
+		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
 		<tr>
 			<td><b>Total</b></td>
 			<td><b>%(total_cost)s</b></td>
@@ -238,7 +249,7 @@ if validate_graph(process_graph):
                 """ % locals()
 
     #############################################
-    # gen tradespace 
+    # gen tradespace
     #############################################
     #print ("\n\n\n---ALLLL----\n\n\n")
     all_alternatives = generate_alternatives(process_graph, weights=("cost", "time"))
@@ -260,7 +271,7 @@ if validate_graph(process_graph):
     # manufacturability
     #############################################
     final_html = final_html + "<ul>"
-    
+
     #manufacturability feedback
     for feedback in MFG_FEEDBACK:
         final_html = final_html + "<li>" + str(feedback) + "</li>"
@@ -284,9 +295,16 @@ if validate_graph(process_graph):
     file.close()
 
     #pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
-      
+
+    outputs = "outputs="+str(inputs)
+    outputTemplate = "\noutputTemplate=<p>Inputs were:</p><p>{{outputs}}</p>"
+
+    target = open("out.txt", 'w')
+    target.write(outputs+outputTemplate)
+    target.close
+
 else:
     err_out("Not manufacturable with this production center - no report generated")
     #print()
     #print("Process graph is invalid - No routing exists")
-    
+
