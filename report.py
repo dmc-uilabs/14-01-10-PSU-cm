@@ -319,12 +319,20 @@ if validate_graph(process_graph):
     reportTemplate=open('report-templates/report-template.html').readlines()
     reportTemplateString=""
 
+    reportCSS=open('report-templates/report.css').readlines()
+    reportCSSString="<style>"
+
     for n,line in enumerate(reportTemplate):
         reportTemplateString+=line.rstrip()
 
+    for y,line in enumerate(reportCSS):
+        reportCSSString+=line.rstrip()
+
+    reportCSSString+="</style>"
+
     outputs = "outputs="+str(inputs)
     # outputTemplate = "\noutputTemplate=<p>POST AGG Inputs were:</p><p>{{outputs}}</p>"
-    outputTemplate = "\noutputTemplate="+reportTemplateString
+    outputTemplate = "\noutputTemplate="+reportCSSString+reportTemplateString
 
     target = open("out.txt", 'w')
     target.write(outputs+outputTemplate)
