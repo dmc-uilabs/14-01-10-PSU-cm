@@ -283,7 +283,7 @@ if validate_graph(process_graph):
     file.flush()
     file.close()
 
-    pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
+    #pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
       
 else:
     err_out("Not manufacturable with this production center - no report generated")
