@@ -320,12 +320,11 @@ if validate_graph(process_graph):
     reportTemplateString=""
 
     for n,line in enumerate(reportTemplate):
-        reportTemplateString+=line
-
-    print(reportTemplateString)
+        reportTemplateString+=line.rstrip()
 
     outputs = "outputs="+str(inputs)
-    outputTemplate = "\noutputTemplate=<p>POST AGG Inputs were:</p><p>{{outputs}}</p>"
+    # outputTemplate = "\noutputTemplate=<p>POST AGG Inputs were:</p><p>{{outputs}}</p>"
+    outputTemplate = reportTemplateString
 
     target = open("out.txt", 'w')
     target.write(outputs+outputTemplate)
