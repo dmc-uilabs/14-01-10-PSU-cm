@@ -314,7 +314,7 @@ if validate_graph(process_graph):
     file.flush()
     file.close()
 
-    pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
+    # pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
     reportTemplate=open('report-templates/report-template.html').readlines()
     reportTemplateString=""
@@ -324,7 +324,7 @@ if validate_graph(process_graph):
 
     outputs = "outputs="+str(inputs)
     # outputTemplate = "\noutputTemplate=<p>POST AGG Inputs were:</p><p>{{outputs}}</p>"
-    outputTemplate = reportTemplateString
+    outputTemplate = "\noutputTemplate="+reportTemplateString
 
     target = open("out.txt", 'w')
     target.write(outputs+outputTemplate)
