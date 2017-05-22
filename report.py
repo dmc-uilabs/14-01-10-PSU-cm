@@ -24,6 +24,7 @@ import logging
 import networkx as nx
 from pylab import figure, axes, pie, title, show
 import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import pdfkit
 import datetime
