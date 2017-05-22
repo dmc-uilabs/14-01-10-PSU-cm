@@ -20,6 +20,13 @@ for line in lines:
     value = kv[1]
     inputs[key] = value
 
+outputs = "outputs="+str(inputs)
+outputTemplate = "\noutputTemplate=<p>Inputs PYOVER were:</p><p>{{outputs}}</p>"
+
+target = open("out.txt", 'w')
+target.write(outputs+outputTemplate)
+target.close
+
 AUTH_TOKEN = False
 CLIENT = "Rolls-Royce"
 TDP_NO = "108651"
@@ -131,6 +138,24 @@ def err_out(message):
 if (False==validate_auth(AUTH_TOKEN)):
     err_out("Invalid Authorization - no report generated")
 
+# Several assets are included with DOME model as .zip files. This will extract them
+def unzip_directories():
+    import os
+    import zipfile
+
+    directory = os.fsencode('./')
+
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        if filename.endswith(".zip"):
+            zip_ref = zipfile.ZipFile(filename, 'r')
+            zip_ref.extractall('./')
+            zip_ref.close()
+            continue
+        else:
+            continue
+
+unzip_directories()
 
 # Scan the library/ folder and its subfolders for __init__.pml files, which are
 # executed to initialize the PML "database"
