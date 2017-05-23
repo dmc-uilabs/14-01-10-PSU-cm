@@ -201,7 +201,7 @@ if validate_graph(process_graph):
 			  <td colspan="2">
 				  <h5 class="w3-opacity"><b>Prepared For:</b> %(COMPANY)s</h5>
 				  <h5 class="w3-opacity"><b>Prepared at:</b> %(PREPTS)s</h5>
-				  <h5 class="w3-opacity"><b>Good for:</b> Cost analysis and quote good for %(EXPIRATION)s</h5>
+				  <h5 class="w3-opacity"><b>Good for:</b> Cost analysis and quote good until %(EXPIRATION)s</h5>
                                   <h5 class="w3-opacity"><b>Company Profile:</b> %(COMPANY_URL)s</h5>
 				  <h5 class="w3-opacity"><b>Contact %(CONTACT)s for questions</h5>
 			  </td>
