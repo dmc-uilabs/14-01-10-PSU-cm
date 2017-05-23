@@ -358,7 +358,7 @@ if validate_graph(process_graph):
     reportCSSString+="</style>"
 
     outputs = "outputs="+str(inputs)
-    outputs+= "\nfinalName="+final_name
+    outputs+= "\nfinalFileName="+final_name
     # outputTemplate = "\noutputTemplate=<p>POST AGG Inputs were:</p><p>{{outputs}}</p>"
     outputTemplate = "\noutputTemplate="+reportCSSString+reportTemplateString
 
