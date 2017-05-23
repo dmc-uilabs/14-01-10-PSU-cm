@@ -318,7 +318,7 @@ if validate_graph(process_graph):
     os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
     # pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
-    upload_report()
+    final_name = upload_report()
 
     reportTemplate=open('report-templates/report-template.html').readlines()
     reportTemplateString=""
@@ -335,6 +335,7 @@ if validate_graph(process_graph):
     reportCSSString+="</style>"
 
     outputs = "outputs="+str(inputs)
+    outputs+= "\nfinalName="+final_name
     # outputTemplate = "\noutputTemplate=<p>POST AGG Inputs were:</p><p>{{outputs}}</p>"
     outputTemplate = "\noutputTemplate="+reportCSSString+reportTemplateString
 
@@ -364,5 +365,8 @@ def upload_report():
 
     from boto.s3.key import Key
     k = Key(bucket)
-    k.key = str(timestamp)+'report.pdf'
+    file_name = str(timestamp)+'report.pdf'
+    k.key = file_name
     k.set_contents_from_filename('./report.pdf')
+
+    return file_name
