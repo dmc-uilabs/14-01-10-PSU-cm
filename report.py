@@ -170,6 +170,29 @@ expand_graph(process_graph)
 # # Save graph as image
 as_png(process_graph, "full-graph.png")
 
+def upload_report():
+    import json
+    import time
+    timestamp = int(time.time())
+
+    with open('credentials.json') as json_data:
+        d = json.load(json_data)
+        access_key = d['accessKeyId']
+        secret_key = d['secretAccessKey']
+
+    from boto.s3.connection import S3Connection
+    conn = S3Connection(access_key, secret_key)
+
+    bucket = conn.get_bucket('psubucket01')
+
+    from boto.s3.key import Key
+    k = Key(bucket)
+    file_name = str(timestamp)+'report.pdf'
+    k.key = file_name
+    k.set_contents_from_filename('./report.pdf')
+
+    return file_name
+
 # Validate the graph by ensuring routings exist
 if validate_graph(process_graph):
 
@@ -347,26 +370,3 @@ else:
     err_out("Not manufacturable with this production center - no report generated")
     #print()
     #print("Process graph is invalid - No routing exists")
-
-def upload_report():
-    import json
-    import time
-    timestamp = int(time.time())
-
-    with open('credentials.json') as json_data:
-        d = json.load(json_data)
-        access_key = d['accessKeyId']
-        secret_key = d['secretAccessKey']
-
-    from boto.s3.connection import S3Connection
-    conn = S3Connection(access_key, secret_key)
-
-    bucket = conn.get_bucket('psubucket01')
-
-    from boto.s3.key import Key
-    k = Key(bucket)
-    file_name = str(timestamp)+'report.pdf'
-    k.key = file_name
-    k.set_contents_from_filename('./report.pdf')
-
-    return file_name
