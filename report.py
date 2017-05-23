@@ -362,7 +362,7 @@ if validate_graph(process_graph):
     # outputTemplate = "\noutputTemplate="+reportCSSString+reportTemplateString
 
     target = open("out.txt", 'w')
-    target.write(outputs+outputTemplate)
+    target.write(outputs)
     target.close
 
 else:
