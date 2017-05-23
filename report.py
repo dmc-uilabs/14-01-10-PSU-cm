@@ -318,6 +318,8 @@ if validate_graph(process_graph):
     os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
     # pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
+    upload_report()
+
     reportTemplate=open('report-templates/report-template.html').readlines()
     reportTemplateString=""
 
@@ -345,3 +347,22 @@ else:
     #print()
     #print("Process graph is invalid - No routing exists")
 
+def upload_report():
+    import json
+    import time
+    timestamp = int(time.time())
+
+    with open('credentials.json') as json_data:
+        d = json.load(json_data)
+        access_key = d['accessKeyId']
+        secret_key = d['secretAccessKey']
+
+    from boto.s3.connection import S3Connection
+    conn = S3Connection(access_key, secret_key)
+
+    bucket = conn.get_bucket('psubucket01')
+
+    from boto.s3.key import Key
+    k = Key(bucket)
+    k.key = str(timestamp)+'report.pdf'
+    k.set_contents_from_filename('./report.pdf')
