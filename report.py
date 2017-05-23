@@ -42,17 +42,16 @@ for line in lines:
     value = kv[1].strip()
     inputs[key] = value
 
-
-AUTH_TOKEN = False
+AUTH_TOKEN = inputs["authToken"]
 CLIENT = "Rolls-Royce"
 TDP_NO = "108651"
 PART = "AE2100 FCOC Bracket"
 MATERIAL = "STEEL"
 PREPTS = datetime.datetime.now()
 COMPANY = "ManufacturingSystems, Inc."
-EXPIRATION = "30 days"
-CONTACT = "rich@MSIsys.com"
-COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/1"
+EXPIRATION = inputs["expireDate"]
+CONTACT = inputs["contactInfo"]
+COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/"+inputs["companyId"]
 
 def print_alternatives(alternatives):
     for i, pa in enumerate(alternatives):
