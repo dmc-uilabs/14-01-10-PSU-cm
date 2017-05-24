@@ -8,8 +8,10 @@ import matplotlib
 from matplotlib import pyplot as plt
 import pdfkit
 import datetime
+import hashlib
+import os.path
 
-AUTH_TOKEN = False
+AUTH_TOKEN = "81c9830be14acde35749b6764913ab61487dff7d"
 CLIENT = "Rolls-Royce"
 TDP_NO = "108651"
 PART = "AE2100 FCOC Bracket"
@@ -19,6 +21,21 @@ COMPANY = "ManufacturingSystems, Inc."
 EXPIRATION = "30 days"
 CONTACT = "rich@MSIsys.com"
 COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/1"
+
+
+def gen_hashes():
+    hash_strings = ["the first hash", "the second hash", "number 3", "hash 4", "final 5"]
+    for string in hash_strings:
+        h = hashlib.new('ripemd160')
+        key = string
+        print ("set: ")
+        for i in range(0,3):
+            h.update((str(string)).encode('utf-8'))
+            print (str(h.hexdigest()))
+            string = str(h.hexdigest())
+             
+
+
 
 
 def print_alternatives(alternatives):
@@ -95,7 +112,27 @@ def gen_tradespace(alternatives, f='tradespace.png', annotate=True):
 
 
 def validate_auth(auth_token):
-    return True
+    hash_strings = ["the first hash", "the second hash", "number 3", "hash 4", "final 5"]
+    for string in hash_strings:
+        h = hashlib.new('ripemd160')
+        key = string
+        for i in range(0,3):
+            h.update((str(string)).encode('utf-8'))
+            string = str(h.hexdigest())
+            if (auth_token==string):
+                fname = "/tmp/" + string
+                if (os.path.isfile(fname)):
+                    print ("File exists!")
+                    return False
+                else:
+                    print ("valid token!")
+                    file = open(fname, 'w')
+                    file.write("0")
+                    file.flush()
+                    file.close()
+                    return True
+
+    return False
 
 
 def err_out(message):
@@ -119,6 +156,8 @@ def err_out(message):
 
 if (False==validate_auth(AUTH_TOKEN)):
     err_out("Invalid Authorization - no report generated")
+
+
 
 
 # Scan the library/ folder and its subfolders for __init__.pml files, which are
@@ -186,14 +225,16 @@ if validate_graph(process_graph):
     (total_cost, selected_processes) = find_min(process_graph, weight="cost")
     minimum_graph = create_subgraph(process_graph, selected_processes)
     total_time = sum_weight(minimum_graph, weight="time")
+    total_cost = float("{0:.2f}".format(total_cost.args[0]))
+    total_time = float("{0:.2f}".format(total_time.args[0]/3600))
 
     final_html = final_html + """
         <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Cheapest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
-			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+			<th colspan="3">$%(total_cost)s and %(total_time)s hours lead time</th>
 		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
 		<tr>
 			<td><b>Total</b></td>
-			<td><b>%(total_cost)s</b></td>
+			<td><b>$%(total_cost)s</b></td>
 			<td><b>Unavailable</b></td>
 		</tr> </tbody> <!-- Table Body --> </table> </div>
                 """ % locals()
@@ -204,14 +245,16 @@ if validate_graph(process_graph):
     (total_time, selected_processes) = find_min(process_graph, weight="time")
     minimum_graph = create_subgraph(process_graph, selected_processes)
     total_cost = sum_weight(minimum_graph, weight="cost")
+    total_cost = float("{0:.2f}".format(total_cost.args[0]))
+    total_time = float("{0:.2f}".format(total_time.args[0]/3600))
 
     final_html = final_html + """
         <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Fastest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
-			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+			<th colspan="3">$%(total_cost)s and %(total_time)s hours lead time</th>
 		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
 		<tr>
 			<td><b>Total</b></td>
-			<td><b>%(total_cost)s</b></td>
+			<td><b>$%(total_cost)s</b></td>
 			<td><b>Unavailable</b></td>
 		</tr> </tbody> <!-- Table Body --> </table> </div>
                 """ % locals()
@@ -223,16 +266,20 @@ if validate_graph(process_graph):
     (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
     (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
     minimumGraph = create_subgraph(process_graph, selected_processes)
-    total_time = cp_time
+    total_time = cp_time/3600
     total_cost = cp_cost
+    total_cost = float("{0:.2f}".format(total_cost))
+    total_time = float("{0:.2f}".format(total_time))
+    #total_cost = total_cost.args[0]
+    #total_time = total_time.args[0]/3600
 
     final_html = final_html + """
         <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
-			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+			<th colspan="3">$%(total_cost)s and %(total_time)s hours lead time</th>
 		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr> 
 		<tr>
 			<td><b>Total</b></td>
-			<td><b>%(total_cost)s</b></td>
+			<td><b>$%(total_cost)s</b></td>
 			<td><b>Unavailable</b></td>
 		</tr> </tbody> <!-- Table Body --> </table> </div>
                 """ % locals()
