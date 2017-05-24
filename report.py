@@ -49,7 +49,7 @@ for line in lines:
     value = kv[1].strip()
     inputs[key] = value
 
-filemanagement.download_tdp_data(inputs["tdpziplocation"])
+filemanagement.download_tdp_data(inputs["fileInput"])
 filemanagement.unzip_directories()
 
 AUTH_TOKEN = inputs["authToken"]

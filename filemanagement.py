@@ -18,7 +18,6 @@ def unzip_directories():
             else:
                 zip_ref.extractall('./')
             zip_ref.close()
-            print(filename)
             continue
         else:
             continue
