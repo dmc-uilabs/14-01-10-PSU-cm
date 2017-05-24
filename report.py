@@ -2,22 +2,24 @@
 
 # # Several assets are included with DOME model as .zip files. This will extract them
 import os
-import zipfile
-def unzip_directories():
+# import zipfile
+# def unzip_directories():
 
-    directory = os.fsencode('./')
+#     directory = os.fsencode('./')
 
-    for file in os.listdir(directory):
-        filename = os.fsdecode(file)
-        if filename.endswith(".zip"):
-            zip_ref = zipfile.ZipFile(filename, 'r')
-            zip_ref.extractall('./')
-            zip_ref.close()
-            continue
-        else:
-            continue
+#     for file in os.listdir(directory):
+#         filename = os.fsdecode(file)
+#         if filename.endswith(".zip"):
+#             zip_ref = zipfile.ZipFile(filename, 'r')
+#             zip_ref.extractall('./')
+#             zip_ref.close()
 
-unzip_directories()
+#             if filename.startswith("TDP"):
+#                 os.rename(filename[:-4], "TDPdata")
+
+#             continue
+#         else:
+#             continue
 
 os.environ["DISPLAY"] = ":0"
 
@@ -32,6 +34,10 @@ import pdfkit
 import datetime
 import hashlib
 import os.path
+import json
+
+# used to unzip files, download TDP data and upload results
+import filemanagement
 
 with open('in.txt') as f:
     lines = f.readlines()
@@ -44,6 +50,9 @@ for line in lines:
     value = kv[1].strip()
     inputs[key] = value
 
+filemanagement.download_tdp_data(inputs["fileInput"])
+filemanagement.unzip_directories()
+
 AUTH_TOKEN = inputs["authToken"]
 CLIENT = "Rolls-Royce"
 TDP_NO = "108651"
@@ -54,6 +63,7 @@ COMPANY = inputs["companyName"]
 EXPIRATION = inputs["expireDate"]
 CONTACT = inputs["contactInfo"]
 COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/"+inputs["companyId"]
+
 
 def gen_hashes():
     hash_strings = ["the first hash", "the second hash", "number 3", "hash 4", "final 5"]
@@ -67,8 +77,10 @@ def gen_hashes():
             string = str(h.hexdigest())
 
 
-
-
+# create constants.json from VPC string in in.txt
+vpc_json = json.loads(inputs["companyVPC"])
+with open('library/constants.json', 'w') as outfile:
+    json.dump(vpc_json, outfile)
 
 def print_alternatives(alternatives):
     for i, pa in enumerate(alternatives):
@@ -197,9 +209,21 @@ if (False==validate_auth(AUTH_TOKEN)):
 auto_register("library")
 
 # Load the eBOM.xml file
-path = r"examples/engine_assembly"
-file = os.path.join(path, "eBOM.xml")
-file = r"examples/simpleExample.xml"
+# path = r"examples/engine_assembly"
+# file = os.path.join(path, "eBOM.xml")
+# file = r"examples/simpleExample.xml"
+
+def return_tdp_xml():
+    tdp_path = "TDPdata"
+    directory = os.fsencode('./'+tdp_path)
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        if filename.endswith(".xml"):
+            return tdp_path+"/"+filename
+        else:
+            continue
+
+file = return_tdp_xml()
 
 process_graph = load_ebom(file, build_quantity=50)
 
@@ -209,28 +233,27 @@ expand_graph(process_graph)
 # # Save graph as image
 as_png(process_graph, "full-graph.png")
 
-def upload_report():
-    import json
-    import time
-    timestamp = int(time.time())
+# def upload_report():
+#     import time
+#     timestamp = int(time.time())
 
-    with open('credentials.json') as json_data:
-        d = json.load(json_data)
-        access_key = d['accessKeyId']
-        secret_key = d['secretAccessKey']
+#     with open('credentials.json') as json_data:
+#         d = json.load(json_data)
+#         access_key = d['accessKeyId']
+#         secret_key = d['secretAccessKey']
 
-    from boto.s3.connection import S3Connection
-    conn = S3Connection(access_key, secret_key)
+#     from boto.s3.connection import S3Connection
+#     conn = S3Connection(access_key, secret_key)
 
-    bucket = conn.get_bucket('psubucket01')
+#     bucket = conn.get_bucket('psubucket01')
 
-    from boto.s3.key import Key
-    k = Key(bucket)
-    file_name = str(timestamp)+'report.pdf'
-    k.key = file_name
-    k.set_contents_from_filename('./report.pdf')
+#     from boto.s3.key import Key
+#     k = Key(bucket)
+#     file_name = str(timestamp)+'report.pdf'
+#     k.key = file_name
+#     k.set_contents_from_filename('./report.pdf')
 
-    return file_name
+#     return file_name
 
 # Validate the graph by ensuring routings exist
 if validate_graph(process_graph):
@@ -251,7 +274,7 @@ if validate_graph(process_graph):
     final_html = final_html + """
                   <tr>
 			  <td width="30%%">
-	          		<img src="../part.png" style="width:100%%" alt="picture of part.png">
+	          		<img src="../TDPdata/iso_capture.png" style="width:100%%" alt="picture of iso_capture.png">
 			  </td>
 			  <td width="60%%" align="center">
             			<h5 class="w3-opacity"><b>Client: %(CLIENT)s</b></h5>
@@ -283,11 +306,15 @@ if validate_graph(process_graph):
     total_cost = float("{0:.2f}".format(total_cost.args[0]))
     total_time = float("{0:.2f}".format(total_time.args[0]/3600))
 
-    final_html = final_html + """
-        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Cheapest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
-			<th colspan="3">$%(total_cost)s and %(total_time)s hours lead time</th>
-		          </tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
+    # print("total cost")
+    # print(total_cost)
+    # print(type(total_cost.args[0]).round(2))
 
+    final_html = final_html + """
+
+        <div class="w3-container" style="float:left; width:33%%"> <h5 class="w3-opacity"><b>Cheapest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
 		<tr>
 			<td><b>Total</b></td>
 			<td><b>$%(total_cost)s</b></td>
@@ -305,9 +332,10 @@ if validate_graph(process_graph):
     total_time = float("{0:.2f}".format(total_time.args[0]/3600))
 
     final_html = final_html + """
-        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Fastest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
 
-			<th colspan="3">$%(total_cost)s and %(total_time)s hours lead time</th>
+        <div class="w3-container" style="float:left; width:33%%"> <h5 class="w3-opacity"><b>Fastest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+
 		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
 
 		<tr>
@@ -321,28 +349,25 @@ if validate_graph(process_graph):
     #############################################
     # balanced config
     #############################################
-    (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-    (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-    minimumGraph = create_subgraph(process_graph, selected_processes)
-    total_time = cp_time/3600
-    total_cost = cp_cost
-    total_cost = float("{0:.2f}".format(total_cost))
-    total_time = float("{0:.2f}".format(total_time))
-    #total_cost = total_cost.args[0]
-    #total_time = total_time.args[0]/3600
 
-    final_html = final_html + """
-        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
 
-			<th colspan="3">$%(total_cost)s and %(total_time)s hours lead time</th>
-		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
+  #   (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
+  #   (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
+  #   minimumGraph = create_subgraph(process_graph, selected_processes)
+  #   total_time = cp_time
+  #   total_cost = cp_cost
 
-		<tr>
-			<td><b>Total</b></td>
-			<td><b>$%(total_cost)s</b></td>
-			<td><b>Unavailable</b></td>
-		</tr> </tbody> <!-- Table Body --> </table> </div>
-                """ % locals()
+  #   final_html = final_html + """
+  #       <div class="w3-container" style="float:left; width:33%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+		# 	<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+		# </tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
+		# <tr>
+		# 	<td><b>Total</b></td>
+		# 	<td><b>%(total_cost)s</b></td>
+		# 	<td><b>Unavailable</b></td>
+		# </tr> </tbody> <!-- Table Body --> </table> </div>
+  #               """ % locals()
+
 
     #############################################
     # gen tradespace
@@ -390,10 +415,11 @@ if validate_graph(process_graph):
     file.flush()
     file.close()
 
-    os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
-    # pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
+    # os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
+    pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
-    final_name = upload_report()
+    # final_name = filemanagement.upload_report()
+    final_name = "testname.pdf"
 
     # reportTemplate=open('report-templates/report-template.html').readlines()
     # reportTemplateString=""
