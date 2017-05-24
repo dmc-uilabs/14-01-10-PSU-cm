@@ -13,6 +13,10 @@ def unzip_directories():
             zip_ref = zipfile.ZipFile(filename, 'r')
             zip_ref.extractall('./')
             zip_ref.close()
+
+            if filename.startswith("TDP"):
+                os.rename(filename[:-4], "TDPdata")
+
             continue
         else:
             continue
@@ -338,10 +342,11 @@ if validate_graph(process_graph):
     file.flush()
     file.close()
 
-    os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
-    # pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
+    # os.system("xvfb -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
+    pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
-    final_name = upload_report()
+    # final_name = upload_report()
+    final_name = "testname.pdf"
 
     # reportTemplate=open('report-templates/report-template.html').readlines()
     # reportTemplateString=""

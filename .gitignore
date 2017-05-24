@@ -1,3 +1,6 @@
 *.pyc
 *.png
 credentials.json
+TDP*
+out.txt
+report.pdf
