@@ -2,26 +2,24 @@
 
 # # Several assets are included with DOME model as .zip files. This will extract them
 import os
-import zipfile
-def unzip_directories():
+# import zipfile
+# def unzip_directories():
 
-    directory = os.fsencode('./')
+#     directory = os.fsencode('./')
 
-    for file in os.listdir(directory):
-        filename = os.fsdecode(file)
-        if filename.endswith(".zip"):
-            zip_ref = zipfile.ZipFile(filename, 'r')
-            zip_ref.extractall('./')
-            zip_ref.close()
+#     for file in os.listdir(directory):
+#         filename = os.fsdecode(file)
+#         if filename.endswith(".zip"):
+#             zip_ref = zipfile.ZipFile(filename, 'r')
+#             zip_ref.extractall('./')
+#             zip_ref.close()
 
-            if filename.startswith("TDP"):
-                os.rename(filename[:-4], "TDPdata")
+#             if filename.startswith("TDP"):
+#                 os.rename(filename[:-4], "TDPdata")
 
-            continue
-        else:
-            continue
-
-# unzip_directories()
+#             continue
+#         else:
+#             continue
 
 os.environ["DISPLAY"] = ":0"
 
@@ -36,6 +34,10 @@ import pdfkit
 import datetime
 import json
 
+# used to unzip files, download TDP data and upload results
+import filemanagement
+
+
 with open('in.txt') as f:
     lines = f.readlines()
 
@@ -46,6 +48,9 @@ for line in lines:
     key = kv[0].strip()
     value = kv[1].strip()
     inputs[key] = value
+
+filemanagement.download_tdp_data(inputs["tdpziplocation"])
+filemanagement.unzip_directories()
 
 AUTH_TOKEN = inputs["authToken"]
 CLIENT = "Rolls-Royce"
@@ -168,9 +173,21 @@ if (False==validate_auth(AUTH_TOKEN)):
 auto_register("library")
 
 # Load the eBOM.xml file
-path = r"examples/engine_assembly"
-file = os.path.join(path, "eBOM.xml")
-file = r"examples/simpleExample.xml"
+# path = r"examples/engine_assembly"
+# file = os.path.join(path, "eBOM.xml")
+# file = r"examples/simpleExample.xml"
+
+def return_tdp_xml():
+    tdp_path = "TDPdata"
+    directory = os.fsencode('./'+tdp_path)
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        if filename.endswith(".xml"):
+            return tdp_path+"/"+filename
+        else:
+            continue
+
+file = return_tdp_xml()
 
 process_graph = load_ebom(file, build_quantity=50)
 
@@ -180,27 +197,27 @@ expand_graph(process_graph)
 # # Save graph as image
 as_png(process_graph, "full-graph.png")
 
-def upload_report():
-    import time
-    timestamp = int(time.time())
+# def upload_report():
+#     import time
+#     timestamp = int(time.time())
 
-    with open('credentials.json') as json_data:
-        d = json.load(json_data)
-        access_key = d['accessKeyId']
-        secret_key = d['secretAccessKey']
+#     with open('credentials.json') as json_data:
+#         d = json.load(json_data)
+#         access_key = d['accessKeyId']
+#         secret_key = d['secretAccessKey']
 
-    from boto.s3.connection import S3Connection
-    conn = S3Connection(access_key, secret_key)
+#     from boto.s3.connection import S3Connection
+#     conn = S3Connection(access_key, secret_key)
 
-    bucket = conn.get_bucket('psubucket01')
+#     bucket = conn.get_bucket('psubucket01')
 
-    from boto.s3.key import Key
-    k = Key(bucket)
-    file_name = str(timestamp)+'report.pdf'
-    k.key = file_name
-    k.set_contents_from_filename('./report.pdf')
+#     from boto.s3.key import Key
+#     k = Key(bucket)
+#     file_name = str(timestamp)+'report.pdf'
+#     k.key = file_name
+#     k.set_contents_from_filename('./report.pdf')
 
-    return file_name
+#     return file_name
 
 # Validate the graph by ensuring routings exist
 if validate_graph(process_graph):
@@ -251,8 +268,12 @@ if validate_graph(process_graph):
     minimum_graph = create_subgraph(process_graph, selected_processes)
     total_time = sum_weight(minimum_graph, weight="time")
 
+    # print("total cost")
+    # print(total_cost)
+    # print(type(total_cost.args[0]).round(2))
+
     final_html = final_html + """
-        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Cheapest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+        <div class="w3-container" style="float:left; width:33%%"> <h5 class="w3-opacity"><b>Cheapest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
 			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
 		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
 		<tr>
@@ -270,7 +291,7 @@ if validate_graph(process_graph):
     total_cost = sum_weight(minimum_graph, weight="cost")
 
     final_html = final_html + """
-        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Fastest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+        <div class="w3-container" style="float:left; width:33%%"> <h5 class="w3-opacity"><b>Fastest:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
 			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
 		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
 		<tr>
@@ -292,7 +313,7 @@ if validate_graph(process_graph):
   #   total_cost = cp_cost
 
   #   final_html = final_html + """
-  #       <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+  #       <div class="w3-container" style="float:left; width:33%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
 		# 	<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
 		# </tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
 		# <tr>
@@ -351,7 +372,7 @@ if validate_graph(process_graph):
     # os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
     pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
-    # final_name = upload_report()
+    # final_name = filemanagement.upload_report()
     final_name = "testname.pdf"
 
     # reportTemplate=open('report-templates/report-template.html').readlines()
