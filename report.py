@@ -21,7 +21,7 @@ def unzip_directories():
         else:
             continue
 
-unzip_directories()
+# unzip_directories()
 
 os.environ["DISPLAY"] = ":0"
 
@@ -34,6 +34,7 @@ matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import pdfkit
 import datetime
+import json
 
 with open('in.txt') as f:
     lines = f.readlines()
@@ -56,6 +57,11 @@ COMPANY = inputs["companyName"]
 EXPIRATION = inputs["expireDate"]
 CONTACT = inputs["contactInfo"]
 COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/"+inputs["companyId"]
+
+# create constants.json from VPC string in in.txt
+vpc_json = json.loads(inputs["companyVPC"])
+with open('library/constants.json', 'w') as outfile:
+    json.dump(vpc_json, outfile)
 
 def print_alternatives(alternatives):
     for i, pa in enumerate(alternatives):
@@ -175,7 +181,6 @@ expand_graph(process_graph)
 as_png(process_graph, "full-graph.png")
 
 def upload_report():
-    import json
     import time
     timestamp = int(time.time())
 
@@ -216,7 +221,7 @@ if validate_graph(process_graph):
     final_html = final_html + """
                   <tr>
 			  <td width="30%%">
-	          		<img src="../part.png" style="width:100%%" alt="picture of part.png">
+	          		<img src="../TDPdata/iso_capture.png" style="width:100%%" alt="picture of iso_capture.png">
 			  </td>
 			  <td width="60%%" align="center">
             			<h5 class="w3-opacity"><b>Client: %(CLIENT)s</b></h5>
@@ -279,22 +284,23 @@ if validate_graph(process_graph):
     #############################################
     # balanced config
     #############################################
-    (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-    (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
-    minimumGraph = create_subgraph(process_graph, selected_processes)
-    total_time = cp_time
-    total_cost = cp_cost
 
-    final_html = final_html + """
-        <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
-			<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
-		</tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
-		<tr>
-			<td><b>Total</b></td>
-			<td><b>%(total_cost)s</b></td>
-			<td><b>Unavailable</b></td>
-		</tr> </tbody> <!-- Table Body --> </table> </div>
-                """ % locals()
+  #   (cp_time, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
+  #   (cp_cost, selected_processes) = find_min(process_graph, weight=lambda n : 0.5*n.cost/dollars + 0.5*n.time/days)
+  #   minimumGraph = create_subgraph(process_graph, selected_processes)
+  #   total_time = cp_time
+  #   total_cost = cp_cost
+
+  #   final_html = final_html + """
+  #       <div class="w3-container" style="float:left; width:25%%"> <h5 class="w3-opacity"><b>Balanced:</b></h5> <table cellspacing='0'> <!-- cellspacing='0' is important, must stay --> <!-- Table Header --> <thead> <tr>
+		# 	<th colspan="3">%(total_cost)s and %(total_time)s lead time</th>
+		# </tr> <tr> <th>Category</th> <th>Cost</th> <th>Uncertainty</th> </tr> </thead> <!-- Table Header --> <!-- Table Body --> <tbody> <tr> <td>Labor</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Table Row --> <tr class="even"> <td>Materials</td> <td>Unavailable</td> <td>Unavailable</td> </tr><!-- Darker Table Row --> <tr> <td>Overhead</td> <td>Unavailable</td> <td>Unavailable</td> </tr> <tr class="even"> <td>Fee</td> <td>Unavailable</td> <td>Unavailable</td> </tr>
+		# <tr>
+		# 	<td><b>Total</b></td>
+		# 	<td><b>%(total_cost)s</b></td>
+		# 	<td><b>Unavailable</b></td>
+		# </tr> </tbody> <!-- Table Body --> </table> </div>
+  #               """ % locals()
 
     #############################################
     # gen tradespace
@@ -342,7 +348,7 @@ if validate_graph(process_graph):
     file.flush()
     file.close()
 
-    # os.system("xvfb -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
+    # os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
     pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
     # final_name = upload_report()
