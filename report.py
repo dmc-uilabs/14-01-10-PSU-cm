@@ -436,7 +436,7 @@ if validate_graph(process_graph):
     # reportCSSString+="</style>"
 
     outputs = "outputs="+str(inputs)
-    outputs+= "\nfinalFileName="+final_name
+    outputs+= "\noutputFile="+final_name
     outputTemplate = "\noutputTemplate=<h3>Report uploaded to: <a href=\"https://s3.amazonaws.com/psubucket01/"+final_name+"\">https://s3.amazonaws.com/psubucket01/"+final_name+"</a>"
 
     target = open("out.txt", 'w')
