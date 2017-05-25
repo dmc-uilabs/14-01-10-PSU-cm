@@ -50,7 +50,7 @@ for line in lines:
     value = kv[1].strip()
     inputs[key] = value
 
-filemanagement.download_tdp_data(inputs["fileInput"])
+filemanagement.download_tdp_data(inputs["inputFile"])
 filemanagement.unzip_directories()
 
 AUTH_TOKEN = inputs["authToken"]
@@ -78,9 +78,9 @@ def gen_hashes():
 
 
 # create constants.json from VPC string in in.txt
-vpc_json = json.loads(inputs["companyVPC"])
-with open('library/constants.json', 'w') as outfile:
-    json.dump(vpc_json, outfile)
+# vpc_json = json.loads(inputs["companyVPC"])
+# with open('library/constants.json', 'w') as outfile:
+#     json.dump(vpc_json, outfile)
 
 def print_alternatives(alternatives):
     for i, pa in enumerate(alternatives):
