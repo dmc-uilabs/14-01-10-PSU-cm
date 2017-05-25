@@ -96,9 +96,9 @@ def gen_hashes():
 
 
 # create constants.json from VPC string in in.txt
-# vpc_json = json.loads(inputs["companyVPC"])
-# with open('library/constants.json', 'w') as outfile:
-#     json.dump(vpc_json, outfile)
+vpc_json = json.loads(inputs["companyVPC"])
+with open('library/constants.json', 'w') as outfile:
+    json.dump(vpc_json, outfile)
 
 def print_alternatives(alternatives):
     for i, pa in enumerate(alternatives):
