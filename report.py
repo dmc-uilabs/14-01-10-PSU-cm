@@ -22,6 +22,23 @@ import os
 #             continue
 
 os.environ["DISPLAY"] = ":0"
+# used to unzip files, download TDP data and upload results
+
+with open('in.txt') as f:
+    lines = f.readlines()
+
+    inputs = {}
+
+    for line in lines:
+        kv = line.rstrip().split("=")
+        key = kv.pop(0).strip()
+        value = "=".join(kv).strip()
+        inputs[key] = value
+
+
+import filemanagement
+filemanagement.download_tdp_data(inputs["inputFile"])
+filemanagement.unzip_directories()
 
 from pml import *
 import logging
@@ -36,22 +53,6 @@ import hashlib
 import os.path
 import json
 
-# used to unzip files, download TDP data and upload results
-import filemanagement
-
-with open('in.txt') as f:
-    lines = f.readlines()
-
-inputs = {}
-
-for line in lines:
-    kv = line.rstrip().split("=")
-    key = kv[0].strip()
-    value = kv[1].strip()
-    inputs[key] = value
-
-filemanagement.download_tdp_data(inputs["inputFile"])
-filemanagement.unzip_directories()
 
 AUTH_TOKEN = inputs["authToken"]
 CLIENT = "Rolls-Royce"
@@ -194,7 +195,7 @@ def err_out(message):
     file.flush()
     file.close
 
-    pdfkit.from_file('report-templates/error-template.html', 'report.pdf')
+    os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/error-template.html' 'report.pdf'")
     #pdfkit.from_file('report-templates/error-template.working.html', 'report.pdf')
     quit()
 
@@ -415,11 +416,10 @@ if validate_graph(process_graph):
     file.flush()
     file.close()
 
-    # os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
-    pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
+    os.system("xvfb-run -a -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
+    # pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
-    # final_name = filemanagement.upload_report()
-    final_name = "testname.pdf"
+    final_name = filemanagement.upload_report()
 
     # reportTemplate=open('report-templates/report-template.html').readlines()
     # reportTemplateString=""
@@ -435,8 +435,8 @@ if validate_graph(process_graph):
     #
     # reportCSSString+="</style>"
 
-    outputs = "outputs="+str(inputs)
-    outputs+= "\nfinalFileName="+final_name
+    # outputs = "outputs="+str(inputs)
+    outputs= "\noutputFile="+final_name
     outputTemplate = "\noutputTemplate=<h3>Report uploaded to: <a href=\"https://s3.amazonaws.com/psubucket01/"+final_name+"\">https://s3.amazonaws.com/psubucket01/"+final_name+"</a>"
 
     target = open("out.txt", 'w')
