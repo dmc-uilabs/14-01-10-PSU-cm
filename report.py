@@ -418,8 +418,8 @@ if validate_graph(process_graph):
     # os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/report-template.html' 'report.pdf'")
     pdfkit.from_file('report-templates/report-template.html', 'report.pdf')
 
-    # final_name = filemanagement.upload_report()
-    final_name = "testname.pdf"
+    final_name = filemanagement.upload_report()
+    # final_name = "testname.pdf"
 
     # reportTemplate=open('report-templates/report-template.html').readlines()
     # reportTemplateString=""
