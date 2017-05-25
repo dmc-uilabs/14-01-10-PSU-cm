@@ -53,6 +53,22 @@ import hashlib
 import os.path
 import json
 
+# used to unzip files, download TDP data and upload results
+import filemanagement
+
+with open('in.txt') as f:
+    lines = f.readlines()
+
+inputs = {}
+
+for line in lines:
+    kv = line.rstrip().split("=")
+    key = kv.pop(0).strip()
+    value = "=".join(kv).strip()
+    inputs[key] = value
+
+filemanagement.download_tdp_data(inputs["inputFile"])
+filemanagement.unzip_directories()
 
 AUTH_TOKEN = inputs["authToken"]
 CLIENT = "Rolls-Royce"
