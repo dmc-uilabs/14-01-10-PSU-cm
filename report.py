@@ -46,8 +46,8 @@ inputs = {}
 
 for line in lines:
     kv = line.rstrip().split("=")
-    key = kv[0].strip()
-    value = kv[1].strip()
+    key = kv.pop(0).strip()
+    value = "=".join(kv).strip()
     inputs[key] = value
 
 filemanagement.download_tdp_data(inputs["inputFile"])
