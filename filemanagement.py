@@ -43,4 +43,12 @@ def upload_report():
     k.key = file_name
     k.set_contents_from_filename('./report.pdf')
 
+    signed_url = conn.generate_url(
+        expires_in=long(1000),
+        method='GET',
+        bucket='psubucket01',
+        key=k.key,
+        query_auth=True
+    )
+
     return file_name
