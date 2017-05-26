@@ -214,6 +214,16 @@ def err_out(message):
 
     os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/error-template.html' 'report.pdf'")
     #pdfkit.from_file('report-templates/error-template.working.html', 'report.pdf')
+
+    final_name = filemanagement.upload_report()
+    outputs = "\noutputFile="+final_name
+    outputs += "\noutputTemplate=<div class=\"project-run-services padding-10\" ng-if=\"!runHistory\" layout=\"column\">          <style>            #custom-dome-UI {             margin-top: -30px;           }          </style>            <div id=\"custom-dome-UI\">             <div layout=\"row\" layout-wrap style=\"padding: 0px 30px\">               <h2>Report NOT Created Successfully:</h2>               <p><a href=\"{{outputFile}}\">{{outputFile}}</a></p>             </div>           </div>        </div>   <script> </script>"
+
+    target = open("out.txt", 'w')
+    target.write(outputs)
+    target.close
+
+
     quit()
 
 if (False==validate_auth(AUTH_TOKEN)):
@@ -454,7 +464,7 @@ if validate_graph(process_graph):
 
     # outputs = "outputs="+str(inputs)
     outputs = "\noutputFile="+final_name
-    outputs += "\noutputTemplate=<h3>Report uploaded to: <a href=\""+final_name+"\">"+final_name+"</a>"
+    outputs += "\noutputTemplate=<div class=\"project-run-services padding-10\" ng-if=\"!runHistory\" layout=\"column\">          <style>            #custom-dome-UI {             margin-top: -30px;           }          </style>            <div id=\"custom-dome-UI\">             <div layout=\"row\" layout-wrap style=\"padding: 0px 30px\">               <h2>Report Created Successfully:</h2>               <p><a href=\"{{outputFile}}\">{{outputFile}}</a></p>             </div>           </div>        </div>   <script> </script>"
 
     target = open("out.txt", 'w')
     target.write(outputs)
