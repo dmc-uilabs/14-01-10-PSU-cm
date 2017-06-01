@@ -80,7 +80,7 @@ PREPTS = datetime.datetime.now()
 COMPANY = inputs["companyName"]
 EXPIRATION = inputs["expireDate"]
 CONTACT = inputs["contactInfo"]
-COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/"+inputs["companyId"]
+COMPANY_URL = "https://portal.opendmc.org/company-profile.php#/profile/"+inputs["companyId"].replace(".0","")
 
 
 def gen_hashes():
