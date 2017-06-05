@@ -212,7 +212,7 @@ def err_out(message):
     file.flush()
     file.close
 
-    os.system("xvfb-run -- /usr/bin/wkhtmltopdf 'report-templates/error-template.html' 'report.pdf'")
+    os.system("xvfb-run -a -- /usr/bin/wkhtmltopdf 'report-templates/error-template.html' 'report.pdf'")
     #pdfkit.from_file('report-templates/error-template.working.html', 'report.pdf')
 
     final_name = filemanagement.upload_report()
